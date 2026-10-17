@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:pisec_client/exceptions/http_exceptions.dart';
+import 'package:pisec_client/globals/notifier_provider.dart';
 import 'package:pisec_client/models/api/queryables/pagination_params.dart';
 import 'package:pisec_client/models/api/responses/camera_credential_response.dart';
 import 'package:pisec_client/models/api/responses/paginated_response.dart';
 import 'package:pisec_client/models/api/responses/redacted_camera_credential_response.dart';
 import 'package:pisec_client/repositories/api/generic/user_repository.dart';
+import 'package:pisec_client/types/auth_state.dart';
+import 'package:pisec_client/viewmodels/auth_view_model.dart';
 import 'package:pisec_client/widgets/credential_tile.dart';
 
 class CredentialsPage extends StatefulWidget {
@@ -73,14 +77,18 @@ class _CredetialsPageState extends State<CredentialsPage> {
 
   Future<PaginatedResponse<RedactedCameraCredentialResponse>>
   _getCredentials() async {
-    try {
-      final response = await widget.userRepository.getCameraCredentials(
-        PaginationParams(pageIndex: 0, pageSize: 1000),
-      );
-      return response;
-    } catch (e, st) {
-      return Future.error(e, st);
+    final authVM = NotifierProvider.of<AuthViewModel>(context);
+    await authVM.assertAuthenticated();
+
+    // Should be displayed in the GUI automatically via FutureBuilder
+    if (authVM.authState == AuthState.desynced) {
+      throw FailedToConnectException("Failed to connect to server");
     }
+
+    final response = await widget.userRepository.getCameraCredentials(
+      PaginationParams(pageIndex: 0, pageSize: 1000),
+    );
+    return response;
   }
 
   void _refreshCredentials() {
