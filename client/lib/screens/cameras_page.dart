@@ -304,14 +304,23 @@ class _CamerasPageState extends State<CamerasPage> {
   }
 
   Future<void> _refreshCameras({bool listen = true}) async {
-    final ownedCamerasResponse = await _getAllCameras(
-      onlyOwned: true,
-      pageSize: 1000,
-      listen: listen,
-    );
+    late final List<CameraResponse> ownedCameraResponses;
+    try {
+      ownedCameraResponses = (await _getAllCameras(
+        onlyOwned: true,
+        pageSize: 1000,
+        listen: listen,
+      )).items;
+    } catch (e) {
+      // If any failure happens, we can re-use the previous value
+      ownedCameraResponses = ownedCameras;
+    }
+
+    if (!mounted) return;
+
     setState(() {
       futureCameras = _getAllCameras(listen: listen);
-      ownedCameras = ownedCamerasResponse.items;
+      ownedCameras = ownedCameraResponses;
     });
   }
 
