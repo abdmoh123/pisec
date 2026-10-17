@@ -45,14 +45,14 @@ class AuthViewModel extends ChangeNotifier {
     _currentUser ??= UserQuery(email: await _loginMemory.getUsername());
 
     try {
-      final hasExpired = await loginService.isRefreshTokenValid(
+      final isValid = await loginService.isRefreshTokenValid(
         token.refreshToken,
       );
-      if (hasExpired) {
+      if (!isValid) {
         _authState = AuthState.disconnected;
         _currentUser = null;
 
-        // Clear token if token is no longer valid
+        // Clear token if token is no longer valid (expired or doesn't exist)
         try {
           await _tokenRepository.clear();
         } on FailedClearException {
