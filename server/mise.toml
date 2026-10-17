@@ -27,9 +27,9 @@ depends = "init"
 run = '''
 #!/usr/bin/env bash
 if [ ${usage_environment} = "dev" ]; then
-    fastapi dev --reload ${usage_verbose}
+    fastapi dev --reload ${usage_verbose} src/pisec_server/main.py
 else
-    fastapi run ${usage_verbose}
+    fastapi run ${usage_verbose} src/pisec_server/main.py
 fi
 '''
 quiet = true
