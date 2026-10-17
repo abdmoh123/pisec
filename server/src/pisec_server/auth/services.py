@@ -93,7 +93,8 @@ def create_access_token(payload: TokenPayloadCreate, expires_delta: timedelta | 
     to_encode = TokenPayload(sub=payload.sub, sub_type=payload.sub_type, exp=expire, iat=datetime.now(timezone.utc))
     try:
         return encode_token(TokenHeader(alg=settings.JWT_ALGORITHM), to_encode)
-    except JWTError as e:
+    # TODO: Find out what exceptions PyJWT actually raises (docs seem wrong)
+    except Exception as e:
         raise TokenEncodingError("Could not create access token") from e
 
 
@@ -101,5 +102,6 @@ def decode_access_token(token: str) -> TokenPayload:
     """Decodes a JWT access token and returns its payload."""
     try:
         return decode_token(token)
-    except (JWTError, ExpiredSignatureError, JWTClaimsError) as e:
+    # TODO: Find out what exceptions PyJWT actually raises (docs seem wrong)
+    except Exception as e:
         raise TokenDecodingError("Could not validate credentials") from e
