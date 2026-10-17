@@ -50,7 +50,7 @@ class _VideosPageState extends State<VideosPage> {
   @override
   void initState() {
     super.initState();
-    _refreshVideos();
+    _refreshVideos(listen: false);
   }
 
   @override
@@ -239,10 +239,11 @@ class _VideosPageState extends State<VideosPage> {
   Future<PaginatedResponse<VideoResponse>> _getAllVideos({
     int? page,
     int pageSize = 10,
+    bool listen = true,
   }) async {
     page = page ?? currentPage;
 
-    final authVM = NotifierProvider.of<AuthViewModel>(context);
+    final authVM = NotifierProvider.of<AuthViewModel>(context, listen: listen);
     await authVM.assertAuthenticated();
 
     // Should be displayed in the GUI automatically via FutureBuilder
@@ -301,9 +302,9 @@ class _VideosPageState extends State<VideosPage> {
     });
   }
 
-  void _refreshVideos() {
+  void _refreshVideos({bool listen = true}) {
     setState(() {
-      futureVideos = _getAllVideos();
+      futureVideos = _getAllVideos(listen: listen);
     });
   }
 }

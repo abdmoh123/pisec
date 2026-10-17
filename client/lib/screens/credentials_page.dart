@@ -27,7 +27,7 @@ class _CredetialsPageState extends State<CredentialsPage> {
   @override
   void initState() {
     super.initState();
-    _refreshCredentials();
+    _refreshCredentials(listen: false);
   }
 
   @override
@@ -75,9 +75,10 @@ class _CredetialsPageState extends State<CredentialsPage> {
     );
   }
 
-  Future<PaginatedResponse<RedactedCameraCredentialResponse>>
-  _getCredentials() async {
-    final authVM = NotifierProvider.of<AuthViewModel>(context);
+  Future<PaginatedResponse<RedactedCameraCredentialResponse>> _getCredentials({
+    bool listen = true,
+  }) async {
+    final authVM = NotifierProvider.of<AuthViewModel>(context, listen: listen);
     await authVM.assertAuthenticated();
 
     // Should be displayed in the GUI automatically via FutureBuilder
@@ -91,9 +92,9 @@ class _CredetialsPageState extends State<CredentialsPage> {
     return response;
   }
 
-  void _refreshCredentials() {
+  void _refreshCredentials({bool listen = true}) {
     setState(() {
-      future = _getCredentials();
+      future = _getCredentials(listen: listen);
     });
   }
 

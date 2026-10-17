@@ -22,7 +22,7 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   void initState() {
     super.initState();
-    _checkAuth();
+    _checkAuth(listen: false);
   }
 
   @override
@@ -86,8 +86,8 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Future<void> _checkAuth() async {
-    final authVM = NotifierProvider.of<AuthViewModel>(context, listen: false);
+  Future<void> _checkAuth({bool listen = true}) async {
+    final authVM = NotifierProvider.of<AuthViewModel>(context, listen: listen);
     await authVM.assertAuthenticated();
 
     if (!mounted) return;

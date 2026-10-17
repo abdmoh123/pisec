@@ -58,7 +58,7 @@ class _CamerasPageState extends State<CamerasPage> {
   @override
   void initState() {
     super.initState();
-    _refreshCameras();
+    _refreshCameras(listen: false);
   }
 
   @override
@@ -242,10 +242,11 @@ class _CamerasPageState extends State<CamerasPage> {
     int? page,
     int pageSize = 10,
     bool onlyOwned = false,
+    bool listen = true,
   }) async {
     page = page ?? currentPage;
 
-    final authVM = NotifierProvider.of<AuthViewModel>(context);
+    final authVM = NotifierProvider.of<AuthViewModel>(context, listen: listen);
     await authVM.assertAuthenticated();
 
     // Should be displayed in the GUI automatically via FutureBuilder
@@ -302,13 +303,14 @@ class _CamerasPageState extends State<CamerasPage> {
     });
   }
 
-  Future<void> _refreshCameras() async {
+  Future<void> _refreshCameras({bool listen = true}) async {
     final ownedCamerasResponse = await _getAllCameras(
       onlyOwned: true,
       pageSize: 1000,
+      listen: listen,
     );
     setState(() {
-      futureCameras = _getAllCameras();
+      futureCameras = _getAllCameras(listen: listen);
       ownedCameras = ownedCamerasResponse.items;
     });
   }
