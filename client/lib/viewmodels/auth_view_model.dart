@@ -59,6 +59,7 @@ class AuthViewModel extends ChangeNotifier {
           // Nothing to do tbh. If clearing fails, it can still get overwritten
         }
       }
+      _authState = AuthState.connected;
     } catch (e) {
       // We are not handling response mismatch exception, as it doesn't indicate
       // whether or not the refresh token has expired.
