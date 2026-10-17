@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Mise start task now works like it used to
+- Switched to PyJWT to fix python-jose vulnerability
+- Switched from deprecated regex to pattern arguments in pydantic models
+
 ## [0.1.0] - 2026-10-10
 
 ### Added
