@@ -34,8 +34,14 @@ class AboutPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 spacing: spacing,
                 children: [
+                  Expanded(
+                    child: Image.asset(
+                      "assets/icon/icon.png",
+                      fit: BoxFit.fitWidth,
+                    ),
+                  ),
                   Text(
-                    pInfo.appName,
+                    "Pisec",
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   Text("version: ${pInfo.version}.${pInfo.buildNumber}"),
