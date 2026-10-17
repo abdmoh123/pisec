@@ -15,8 +15,8 @@ class CameraGetParams(PaginatedParams):
 
     camera_id: Annotated[list[int] | None, Query(ge=1)] = None  # Named in singular form due to how it's queried
     user_id: Annotated[list[int] | None, Query(ge=1)] = None  # Named in singular form due to how it's queried
-    name: Annotated[str | None, Query(regex=camera_name_regex)] = None
-    mac_address: Annotated[str | None, Query(regex=mac_address_regex)] = None
+    name: Annotated[str | None, Query(pattern=camera_name_regex)] = None
+    mac_address: Annotated[str | None, Query(pattern=mac_address_regex)] = None
     order_by: Annotated[Sortable[CameraColumns], SortableParser(CameraColumns), Query()] = Sortable(
         CameraColumns.ID, ascending=True
     )

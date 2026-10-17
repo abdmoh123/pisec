@@ -15,7 +15,7 @@ class VideoGetParams(PaginatedParams):
 
     video_id: Annotated[list[int] | None, Query(ge=1)] = None  # Named in singular form due to how it's queried
     camera_id: Annotated[list[int] | None, Query(ge=1)] = None  # Named in singular form due to how it's queried
-    file_name: Annotated[str | None, Query(regex=file_name_regex, min_length=5)] = None
+    file_name: Annotated[str | None, Query(pattern=file_name_regex, min_length=5)] = None
     order_by: Annotated[Sortable[VideoColumns], SortableParser(VideoColumns), Query()] = Sortable(
         VideoColumns.ID, ascending=True
     )
