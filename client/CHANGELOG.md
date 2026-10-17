@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- About page shows the app logo and the public facing 'Pisec' name
+- No longer logged out if you lose connection to the server
+
+### Fixed
+
+- GUI potentially overlapping system areas (e.g. navigation buttons or rounded corners)
+- Potential crashes when loading new pages (e.g. camera page)
+
 ## [1.0.0] - 2026-10-10
 
 ### Added
