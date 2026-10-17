@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:pisec_client/exceptions/http_exceptions.dart';
+import 'package:pisec_client/globals/notifier_provider.dart';
 import 'package:pisec_client/models/api/queryables/pagination_params.dart';
 import 'package:pisec_client/models/api/queryables/video_query.dart';
 import 'package:pisec_client/models/api/responses/paginated_response.dart';
@@ -8,7 +10,9 @@ import 'package:pisec_client/models/api/responses/video_response.dart';
 import 'package:pisec_client/models/api/sortables/video_fields.dart';
 import 'package:pisec_client/models/sortable.dart';
 import 'package:pisec_client/repositories/api/generic/video_repository.dart';
+import 'package:pisec_client/types/auth_state.dart';
 import 'package:pisec_client/types/sort_direction.dart';
+import 'package:pisec_client/viewmodels/auth_view_model.dart';
 import 'package:pisec_client/widgets/video_tile.dart';
 
 class VideosPage extends StatefulWidget {
@@ -237,6 +241,16 @@ class _VideosPageState extends State<VideosPage> {
     int pageSize = 10,
   }) async {
     page = page ?? currentPage;
+
+    final authVM = NotifierProvider.of<AuthViewModel>(context);
+    await authVM.assertAuthenticated();
+
+    // Should be displayed in the GUI automatically via FutureBuilder
+    if (authVM.authState == AuthState.desynced) {
+      _resetPagination();
+      throw FailedToConnectException("Failed to connect to server");
+    }
+
     try {
       final query = VideoQuery(orderBy: _sortable);
       final response = await widget.videoRepository.getVideos(
@@ -248,12 +262,9 @@ class _VideosPageState extends State<VideosPage> {
         setState(() => maxPages = response.totalPages);
       }
       return response;
-    } catch (e, st) {
-      setState(() {
-        currentPage = 1;
-        maxPages = 0;
-      });
-      return Future.error(e, st);
+    } catch (e) {
+      _resetPagination();
+      rethrow;
     }
   }
 
@@ -279,6 +290,15 @@ class _VideosPageState extends State<VideosPage> {
       return;
     }
     _toPage(currentPage - 1);
+  }
+
+  void _resetPagination() {
+    if (!mounted) return;
+
+    setState(() {
+      currentPage = 1;
+      maxPages = 0;
+    });
   }
 
   void _refreshVideos() {

@@ -58,3 +58,12 @@ class HttpClientException implements Exception {
   @override
   String toString() => message;
 }
+
+class FailedToConnectException implements Exception {
+  final String message;
+
+  const FailedToConnectException(this.message);
+
+  @override
+  String toString() => message;
+}

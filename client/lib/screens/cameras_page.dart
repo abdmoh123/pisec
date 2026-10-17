@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pisec_client/exceptions/http_exceptions.dart';
+import 'package:pisec_client/globals/notifier_provider.dart';
 import 'package:pisec_client/models/api/queryables/pagination_params.dart';
 import 'package:pisec_client/models/api/responses/camera_response.dart';
 import 'package:pisec_client/models/api/responses/camera_subscription_response.dart';
@@ -9,7 +10,9 @@ import 'package:pisec_client/models/api/sortables/camera_fields.dart';
 import 'package:pisec_client/models/sortable.dart';
 import 'package:pisec_client/repositories/api/generic/camera_repository.dart';
 import 'package:pisec_client/repositories/api/generic/user_repository.dart';
+import 'package:pisec_client/types/auth_state.dart';
 import 'package:pisec_client/types/sort_direction.dart';
+import 'package:pisec_client/viewmodels/auth_view_model.dart';
 import 'package:pisec_client/widgets/camera_tile.dart';
 import 'package:pisec_client/widgets/delete_submit_dialog.dart';
 
@@ -241,6 +244,16 @@ class _CamerasPageState extends State<CamerasPage> {
     bool onlyOwned = false,
   }) async {
     page = page ?? currentPage;
+
+    final authVM = NotifierProvider.of<AuthViewModel>(context);
+    await authVM.assertAuthenticated();
+
+    // Should be displayed in the GUI automatically via FutureBuilder
+    if (authVM.authState == AuthState.desynced) {
+      _resetPagination();
+      throw FailedToConnectException("Failed to connect to server");
+    }
+
     try {
       final response = await widget.cameraRepository.getCurrentUserCameras(
         onlyOwned: onlyOwned,
@@ -251,8 +264,9 @@ class _CamerasPageState extends State<CamerasPage> {
         setState(() => maxPages = response.totalPages);
       }
       return response;
-    } catch (e, st) {
-      return Future.error(e, st);
+    } catch (e) {
+      _resetPagination();
+      rethrow;
     }
   }
 
@@ -278,6 +292,14 @@ class _CamerasPageState extends State<CamerasPage> {
       return;
     }
     _toPage(currentPage - 1);
+  }
+
+  void _resetPagination() {
+    if (!mounted) return;
+    setState(() {
+      currentPage = 1;
+      maxPages = 0;
+    });
   }
 
   Future<void> _refreshCameras() async {
