@@ -3,7 +3,7 @@ import 'package:pisec_client/globals/notifier_provider.dart';
 import 'package:pisec_client/models/api/queryables/user_query.dart';
 import 'package:pisec_client/models/api/responses/user_response.dart';
 import 'package:pisec_client/repositories/api/generic/user_repository.dart';
-import 'package:pisec_client/viewmodels/auth_state.dart';
+import 'package:pisec_client/viewmodels/auth_view_model.dart';
 import 'package:pisec_client/widgets/dangerous_button.dart';
 import 'package:pisec_client/widgets/delete_submit_dialog.dart';
 
@@ -189,8 +189,8 @@ class _ProfilePageState extends State<ProfilePage> {
       // Required because we are using context more than once in async
       if (!context.mounted) return;
 
-      final authState = NotifierProvider.of<AuthState>(context);
-      await authState.reLogin(
+      final authVM = NotifierProvider.of<AuthViewModel>(context);
+      await authVM.reLogin(
         UserQuery(email: emailText, password: _passwordController.text),
       );
     }
@@ -218,8 +218,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
       // Set the authenticaed status as false (account no longer exists)
       // This will automatically redirect to the login page
-      final authState = NotifierProvider.of<AuthState>(context);
-      await authState.assertAuthenticated();
+      final authVM = NotifierProvider.of<AuthViewModel>(context);
+      await authVM.assertAuthenticated();
     }
   }
 }

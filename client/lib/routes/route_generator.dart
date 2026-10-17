@@ -9,14 +9,14 @@ import 'package:pisec_client/screens/credentials_page.dart';
 import 'package:pisec_client/screens/login_page.dart';
 import 'package:pisec_client/screens/profile_page.dart';
 import 'package:pisec_client/screens/register_page.dart';
-import 'package:pisec_client/viewmodels/auth_state.dart';
+import 'package:pisec_client/viewmodels/auth_view_model.dart';
 import 'package:pisec_client/widgets/helpers/auth_redirector.dart';
 
 class RouteGenerator {
   final List<Widget> mainPages;
-  final AuthState authState;
+  final AuthViewModel authVM;
 
-  const RouteGenerator({required this.mainPages, required this.authState});
+  const RouteGenerator({required this.mainPages, required this.authVM});
 
   Route<dynamic> generateRoutes(RouteSettings settings) {
     final args = settings.arguments;
@@ -113,7 +113,7 @@ class RouteGenerator {
 
   Route<dynamic> _protectedRoute(Widget child) {
     return MaterialPageRoute(
-      builder: (context) => AuthRedirector(authState: authState, child: child),
+      builder: (context) => AuthRedirector(authVM: authVM, child: child),
     );
   }
 

@@ -6,8 +6,9 @@ import 'package:pisec_client/models/api/token.dart';
 import 'package:pisec_client/repositories/server_config_repository.dart';
 import 'package:pisec_client/repositories/token_repository.dart';
 import 'package:pisec_client/services/login_api_service.dart';
+import 'package:pisec_client/types/auth_state.dart';
 
-class AuthState extends ChangeNotifier {
+class AuthViewModel extends ChangeNotifier {
   final LoginMemoryRepository _loginMemory;
   final TokenRepository _tokenRepository;
 
@@ -16,23 +17,23 @@ class AuthState extends ChangeNotifier {
   UserQuery? _currentUser;
 
   // So initial assert would notify listeners if user wasn't logged in
-  bool _isAuthenticated = true;
+  AuthState _authState = AuthState.desynced;
 
-  AuthState(this._loginMemory, this._tokenRepository, this.loginService);
+  AuthViewModel(this._loginMemory, this._tokenRepository, this.loginService);
 
   String get serverUrl => loginService.baseUrl ?? "";
   UserQuery? get currentUser => _currentUser;
 
-  bool get isAuthenticated => _isAuthenticated;
+  AuthState get authState => _authState;
 
   Future<void> assertAuthenticated() async {
-    final oldIsAuthenticated = _isAuthenticated;
+    final oldIsAuthenticated = _authState;
 
     final token = await _tokenRepository.getToken();
     if (token == null) {
-      _isAuthenticated = false;
+      _authState = AuthState.disconnected;
       _currentUser = null;
-      if (oldIsAuthenticated != _isAuthenticated) {
+      if (oldIsAuthenticated != _authState) {
         notifyListeners();
       }
       return;
@@ -44,9 +45,20 @@ class AuthState extends ChangeNotifier {
     _currentUser ??= UserQuery(email: await _loginMemory.getUsername());
 
     try {
-      _isAuthenticated = await loginService.isRefreshTokenValid(
+      final hasExpired = await loginService.isRefreshTokenValid(
         token.refreshToken,
       );
+      if (hasExpired) {
+        _authState = AuthState.disconnected;
+        _currentUser = null;
+
+        // Clear token if token is no longer valid
+        try {
+          await _tokenRepository.clear();
+        } on FailedClearException {
+          // Nothing to do tbh. If clearing fails, it can still get overwritten
+        }
+      }
     } catch (e) {
       // We are not handling response mismatch exception, as it doesn't indicate
       // whether or not the refresh token has expired.
@@ -55,24 +67,20 @@ class AuthState extends ChangeNotifier {
       if (e is ResponseMismatchException) {
         rethrow;
       }
-
       // All other exceptions are handled though
-      _isAuthenticated = false;
-      _currentUser = null;
-      try {
-        await _tokenRepository.clear();
-      } on FailedClearException {
-        // Nothing to do tbh
-      }
+
+      // Setting the state to desynced lets the app stay logged in but no data
+      // is available until they regain connection (e.g. by enabling a VPN)
+      _authState = AuthState.desynced;
     } finally {
-      if (oldIsAuthenticated != _isAuthenticated) {
+      if (oldIsAuthenticated != _authState) {
         notifyListeners();
       }
     }
   }
 
   Future<void> login(String serverUrl, UserQuery userQuery) async {
-    if (_isAuthenticated) {
+    if (_authState != AuthState.disconnected) {
       // Nothing will change so no need to notify or try to login
       return;
     }
@@ -112,7 +120,7 @@ class AuthState extends ChangeNotifier {
       return;
     }
 
-    _isAuthenticated = true;
+    _authState = AuthState.connected;
 
     notifyListeners();
   }
@@ -122,7 +130,7 @@ class AuthState extends ChangeNotifier {
     // Unlikely for cleared token and _isAuthenticated to be true
     final token = await _tokenRepository.getToken();
     if (token == null) {
-      _isAuthenticated = false;
+      _authState = AuthState.disconnected;
       _currentUser = null;
 
       notifyListeners();
@@ -138,7 +146,7 @@ class AuthState extends ChangeNotifier {
       // TODO: Have the logout service try to repeat the attempt if failed
       return;
     }
-    _isAuthenticated = false;
+    _authState = AuthState.disconnected;
     _currentUser = null;
 
     try {
@@ -153,7 +161,7 @@ class AuthState extends ChangeNotifier {
   }
 
   Future<void> reLogin(UserQuery userQuery) async {
-    if (!_isAuthenticated) {
+    if (_authState == AuthState.disconnected) {
       // You can't re-login if you're not logged in. Use the login method
       return;
     }
@@ -162,7 +170,7 @@ class AuthState extends ChangeNotifier {
     // Unlikely for cleared token and _isAuthenticated to be true
     final oldToken = await _tokenRepository.getToken();
     if (oldToken == null) {
-      _isAuthenticated = false;
+      _authState = AuthState.disconnected;
       _currentUser = null;
 
       notifyListeners();
@@ -177,7 +185,7 @@ class AuthState extends ChangeNotifier {
       // removed, so we don't need to do anything
     }
 
-    _isAuthenticated = false;
+    _authState = AuthState.disconnected;
 
     try {
       await _tokenRepository.clear();
@@ -231,7 +239,7 @@ class AuthState extends ChangeNotifier {
     }
 
     // We are considered authenticated if token was saved successfully
-    _isAuthenticated = true;
+    _authState = AuthState.connected;
 
     // Don't keep password in memory
     _currentUser = UserQuery(email: userQuery.email);

@@ -3,7 +3,7 @@ import 'package:pisec_client/globals/notifier_provider.dart';
 import 'package:pisec_client/repositories/api/generic/user_repository.dart';
 import 'package:pisec_client/routes/route_args/credentials_route_args.dart';
 import 'package:pisec_client/routes/route_args/profile_route_args.dart';
-import 'package:pisec_client/viewmodels/auth_state.dart';
+import 'package:pisec_client/viewmodels/auth_view_model.dart';
 import 'package:pisec_client/widgets/dangerous_button.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -24,7 +24,7 @@ class SettingsPage extends StatelessWidget {
             arguments: ProfileRouteArgs(
               userRepository: userRepository,
               initialEmail:
-                  NotifierProvider.of<AuthState>(
+                  NotifierProvider.of<AuthViewModel>(
                     context,
                     listen: false,
                   ).currentUser?.email ??
@@ -64,7 +64,7 @@ class SettingsPage extends StatelessWidget {
   }
 
   Future<void> _logout(BuildContext context) async {
-    final authState = NotifierProvider.of<AuthState>(context);
-    await authState.logout();
+    final authVM = NotifierProvider.of<AuthViewModel>(context);
+    await authVM.logout();
   }
 }

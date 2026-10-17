@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:pisec_client/globals/notifier_provider.dart';
 import 'package:pisec_client/models/api/queryables/user_query.dart';
 import 'package:pisec_client/routes/route_args/register_route_args.dart';
-import 'package:pisec_client/viewmodels/auth_state.dart';
+import 'package:pisec_client/types/auth_state.dart';
+import 'package:pisec_client/viewmodels/auth_view_model.dart';
 
 enum _AppBarMenuActions { about }
 
@@ -135,7 +136,7 @@ class _LoginPageState extends State<LoginPage> {
                         onPressed: () => Navigator.of(context).pushNamed(
                           '/register',
                           arguments: RegisterRouteArgs(
-                            authService: NotifierProvider.of<AuthState>(
+                            authService: NotifierProvider.of<AuthViewModel>(
                               context,
                             ).loginService,
                             serverUrl: _serverUrlController.text,
@@ -169,13 +170,13 @@ class _LoginPageState extends State<LoginPage> {
     );
 
     // TODO: Improve how invalid input is handled
-    final authState = NotifierProvider.of<AuthState>(context);
-    await authState.login(_serverUrlController.text, userQuery);
+    final authVM = NotifierProvider.of<AuthViewModel>(context);
+    await authVM.login(_serverUrlController.text, userQuery);
 
     // Required because we are using context more than once in async
     if (!context.mounted) return;
 
-    if (!authState.isAuthenticated) {
+    if (authVM.authState != AuthState.connected) {
       _passwordController.clear();
       return;
     }

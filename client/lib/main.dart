@@ -15,7 +15,8 @@ import 'package:pisec_client/screens/videos_page.dart';
 import 'package:pisec_client/services/auth_http_client.dart';
 import 'package:pisec_client/services/login_api_service.dart';
 import 'package:pisec_client/services/task_id_generators.dart';
-import 'package:pisec_client/viewmodels/auth_state.dart';
+import 'package:pisec_client/types/auth_state.dart';
+import 'package:pisec_client/viewmodels/auth_view_model.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,12 +26,12 @@ Future<void> main() async {
   final tokenStorage = TokenRepository();
   final authService = LoginAPIService(baseUrl: baseUrl);
 
-  final authState = AuthState(loginMemory, tokenStorage, authService);
-  await authState.assertAuthenticated();
+  final authVM = AuthViewModel(loginMemory, tokenStorage, authService);
+  await authVM.assertAuthenticated();
   final client = AuthHttpClient(
     tokenStorage,
     authService,
-    onAuthGivenUp: authState.assertAuthenticated,
+    onAuthGivenUp: authVM.assertAuthenticated,
   );
 
   // Automatically chooses between web and native downloader
@@ -54,27 +55,27 @@ Future<void> main() async {
     SettingsPage(userRepository: userRepository),
   ];
 
-  final routeGenerator = RouteGenerator(mainPages: pages, authState: authState);
+  final routeGenerator = RouteGenerator(mainPages: pages, authVM: authVM);
 
   // Required to display the date in the correct format
   initializeDateFormatting("en_GB");
-  runApp(PisecApp(routeGenerator: routeGenerator, authState: authState));
+  runApp(PisecApp(routeGenerator: routeGenerator, authVM: authVM));
 }
 
 class PisecApp extends StatelessWidget {
   final RouteGenerator routeGenerator;
-  final AuthState authState;
+  final AuthViewModel authVM;
 
   const PisecApp({
     super.key,
     required this.routeGenerator,
-    required this.authState,
+    required this.authVM,
   });
 
   @override
   Widget build(BuildContext context) {
-    return NotifierProvider<AuthState>(
-      notifier: authState,
+    return NotifierProvider<AuthViewModel>(
+      notifier: authVM,
       child: MaterialApp(
         title: 'Pisec',
         theme: ThemeData(
@@ -84,14 +85,14 @@ class PisecApp extends StatelessWidget {
           ),
         ),
         onGenerateInitialRoutes: ((initialRoute) {
-          if (!authState.isAuthenticated) {
+          if (authVM.authState == AuthState.disconnected) {
             return [
               routeGenerator.generateRoutes(
                 RouteSettings(
                   name: '/login',
                   arguments: LoginRouteArgs(
-                    serverUrl: authState.serverUrl,
-                    email: authState.currentUser?.email ?? "",
+                    serverUrl: authVM.serverUrl,
+                    email: authVM.currentUser?.email ?? "",
                   ),
                 ),
               ),
