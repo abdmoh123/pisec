@@ -140,7 +140,7 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text("${widget.title} - ${_getTitle(pageIndex)}"),
       ),
-      body: Center(child: widget.pages[pageIndex]),
+      body: SafeArea(child: Center(child: widget.pages[pageIndex])),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: pageIndex,
         items: [

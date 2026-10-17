@@ -75,86 +75,90 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
         ],
       ),
-      body: Form(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(spacing),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 400),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                spacing: spacing,
-                children: [
-                  Text(
-                    "Create a new account",
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  ),
-                  const SizedBox(height: 2 * spacing),
-                  TextFormField(
-                    decoration: const InputDecoration(
-                      labelText: 'Server host',
-                      border: OutlineInputBorder(),
+      body: SafeArea(
+        child: Form(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(spacing),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 400),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  spacing: spacing,
+                  children: [
+                    Text(
+                      "Create a new account",
+                      style: Theme.of(context).textTheme.headlineMedium,
                     ),
-                    controller: _serverUrlController,
-                    onFieldSubmitted: (_) async => await _onSubmit(context),
-                  ),
-                  const SizedBox(height: spacing),
-                  TextFormField(
-                    decoration: const InputDecoration(
-                      labelText: 'Email',
-                      border: OutlineInputBorder(),
-                    ),
-                    controller: _emailController,
-                    onFieldSubmitted: (_) async => await _onSubmit(context),
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      border: const OutlineInputBorder(),
-                      suffixIcon: IconButton(
-                        onPressed: () =>
-                            setState(() => _passwordHidden = !_passwordHidden),
-                        icon: Icon(
-                          _passwordHidden
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                        ),
-                        tooltip: _passwordHidden
-                            ? "Show password"
-                            : "Hide password",
+                    const SizedBox(height: 2 * spacing),
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        labelText: 'Server host',
+                        border: OutlineInputBorder(),
                       ),
+                      controller: _serverUrlController,
+                      onFieldSubmitted: (_) async => await _onSubmit(context),
                     ),
-                    controller: _passwordController,
-                    obscureText: _passwordHidden,
-                    onFieldSubmitted: (_) async => await _onSubmit(context),
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      labelText: 'Confirm password',
-                      border: const OutlineInputBorder(),
-                      suffixIcon: IconButton(
-                        onPressed: () =>
-                            setState(() => _passwordHidden = !_passwordHidden),
-                        icon: Icon(
-                          _passwordHidden
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                        ),
-                        tooltip: _passwordHidden
-                            ? "Show password"
-                            : "Hide password",
+                    const SizedBox(height: spacing),
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        labelText: 'Email',
+                        border: OutlineInputBorder(),
                       ),
+                      controller: _emailController,
+                      onFieldSubmitted: (_) async => await _onSubmit(context),
                     ),
-                    controller: _confirmPasswordController,
-                    obscureText: _passwordHidden,
-                    onFieldSubmitted: (_) async => await _onSubmit(context),
-                  ),
-                  const SizedBox(height: spacing),
-                  FilledButton(
-                    onPressed: () async => await _onSubmit(context),
-                    child: const Text("Register"),
-                  ),
-                ],
+                    TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        border: const OutlineInputBorder(),
+                        suffixIcon: IconButton(
+                          onPressed: () => setState(
+                            () => _passwordHidden = !_passwordHidden,
+                          ),
+                          icon: Icon(
+                            _passwordHidden
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                          tooltip: _passwordHidden
+                              ? "Show password"
+                              : "Hide password",
+                        ),
+                      ),
+                      controller: _passwordController,
+                      obscureText: _passwordHidden,
+                      onFieldSubmitted: (_) async => await _onSubmit(context),
+                    ),
+                    TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'Confirm password',
+                        border: const OutlineInputBorder(),
+                        suffixIcon: IconButton(
+                          onPressed: () => setState(
+                            () => _passwordHidden = !_passwordHidden,
+                          ),
+                          icon: Icon(
+                            _passwordHidden
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                          tooltip: _passwordHidden
+                              ? "Show password"
+                              : "Hide password",
+                        ),
+                      ),
+                      controller: _confirmPasswordController,
+                      obscureText: _passwordHidden,
+                      onFieldSubmitted: (_) async => await _onSubmit(context),
+                    ),
+                    const SizedBox(height: spacing),
+                    FilledButton(
+                      onPressed: () async => await _onSubmit(context),
+                      child: const Text("Register"),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

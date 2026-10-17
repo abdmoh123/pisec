@@ -71,90 +71,93 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ],
       ),
-      body: Form(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(spacing),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 400),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                spacing: spacing,
-                children: [
-                  Text(
-                    "Sign in to your Pisec server",
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  ),
-                  const SizedBox(height: 2 * spacing),
-                  TextFormField(
-                    decoration: const InputDecoration(
-                      labelText: 'Server host',
-                      border: OutlineInputBorder(),
+      body: SafeArea(
+        child: Form(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(spacing),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 400),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  spacing: spacing,
+                  children: [
+                    Text(
+                      "Sign in to your Pisec server",
+                      style: Theme.of(context).textTheme.headlineMedium,
                     ),
-                    controller: _serverUrlController,
-                    onFieldSubmitted: (_) async => await _onSubmit(context),
-                  ),
-                  const SizedBox(height: spacing),
-                  TextFormField(
-                    decoration: const InputDecoration(
-                      labelText: 'Email',
-                      border: OutlineInputBorder(),
-                    ),
-                    controller: _emailController,
-                    onFieldSubmitted: (_) async => await _onSubmit(context),
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      border: const OutlineInputBorder(),
-                      suffixIcon: IconButton(
-                        onPressed: () =>
-                            setState(() => _passwordHidden = !_passwordHidden),
-                        icon: Icon(
-                          _passwordHidden
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                        ),
-                        tooltip: _passwordHidden
-                            ? "Show password"
-                            : "Hide password",
+                    const SizedBox(height: 2 * spacing),
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        labelText: 'Server host',
+                        border: OutlineInputBorder(),
                       ),
+                      controller: _serverUrlController,
+                      onFieldSubmitted: (_) async => await _onSubmit(context),
                     ),
-                    controller: _passwordController,
-                    obscureText: _passwordHidden,
-                    onFieldSubmitted: (_) async => await _onSubmit(context),
-                  ),
-                  const SizedBox(height: spacing),
-                  Row(
-                    spacing: spacing,
-                    children: [
-                      FilledButton(
-                        onPressed: () async => await _onSubmit(context),
-                        child: const Text("Sign in"),
+                    const SizedBox(height: spacing),
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        labelText: 'Email',
+                        border: OutlineInputBorder(),
                       ),
-                      OutlinedButton(
-                        onPressed: () => Navigator.of(context).pushNamed(
-                          '/register',
-                          arguments: RegisterRouteArgs(
-                            authService: NotifierProvider.of<AuthViewModel>(
-                              context,
-                            ).loginService,
-                            serverUrl: _serverUrlController.text,
-                            email: _emailController.text,
-                            onSubmitSuccess: (serverUrl, email) {
-                              // After registering was successful, automatically
-                              // set the server url and email to use the one
-                              // from the register page
-                              _serverUrlController.text = serverUrl;
-                              _emailController.text = email;
-                            },
+                      controller: _emailController,
+                      onFieldSubmitted: (_) async => await _onSubmit(context),
+                    ),
+                    TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        border: const OutlineInputBorder(),
+                        suffixIcon: IconButton(
+                          onPressed: () => setState(
+                            () => _passwordHidden = !_passwordHidden,
                           ),
+                          icon: Icon(
+                            _passwordHidden
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                          tooltip: _passwordHidden
+                              ? "Show password"
+                              : "Hide password",
                         ),
-                        child: const Text("Register"),
                       ),
-                    ],
-                  ),
-                ],
+                      controller: _passwordController,
+                      obscureText: _passwordHidden,
+                      onFieldSubmitted: (_) async => await _onSubmit(context),
+                    ),
+                    const SizedBox(height: spacing),
+                    Row(
+                      spacing: spacing,
+                      children: [
+                        FilledButton(
+                          onPressed: () async => await _onSubmit(context),
+                          child: const Text("Sign in"),
+                        ),
+                        OutlinedButton(
+                          onPressed: () => Navigator.of(context).pushNamed(
+                            '/register',
+                            arguments: RegisterRouteArgs(
+                              authService: NotifierProvider.of<AuthViewModel>(
+                                context,
+                              ).loginService,
+                              serverUrl: _serverUrlController.text,
+                              email: _emailController.text,
+                              onSubmitSuccess: (serverUrl, email) {
+                                // After registering was successful, automatically
+                                // set the server url and email to use the one
+                                // from the register page
+                                _serverUrlController.text = serverUrl;
+                                _emailController.text = email;
+                              },
+                            ),
+                          ),
+                          child: const Text("Register"),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

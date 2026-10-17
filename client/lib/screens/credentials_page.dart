@@ -38,23 +38,25 @@ class _CredetialsPageState extends State<CredentialsPage> {
         child: Icon(Icons.add),
         onPressed: () async => await _newCredential(),
       ),
-      body: FutureBuilder(
-        future: future,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return Center(child: Text(snapshot.error.toString()));
-          }
-          if (snapshot.hasData) {
-            if (snapshot.data!.items.isEmpty) {
-              return const Center(child: Text("No credentials found"));
+      body: SafeArea(
+        child: FutureBuilder(
+          future: future,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
             }
-            return _buildCredentialsList(snapshot.data!.items);
-          }
-          return const Center(child: Text("Something went wrong"));
-        },
+            if (snapshot.hasError) {
+              return Center(child: Text(snapshot.error.toString()));
+            }
+            if (snapshot.hasData) {
+              if (snapshot.data!.items.isEmpty) {
+                return const Center(child: Text("No credentials found"));
+              }
+              return _buildCredentialsList(snapshot.data!.items);
+            }
+            return const Center(child: Text("Something went wrong"));
+          },
+        ),
       ),
     );
   }
