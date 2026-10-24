@@ -28,7 +28,7 @@ endif
 .PHONY: up enter rebuild down
 
 up:
-	devcontainer up $(UP_ARGS) --remove-existing-container
+	devcontainer up $(UP_ARGS)
 
 enter:
 	devcontainer exec $(DC_ARGS) $(SHELL_CMD)
