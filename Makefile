@@ -21,6 +21,12 @@ SSH_SOCK := $(SSH_AUTH_SOCK)
 DC_ARGS := --workspace-folder . --config $(CONFIG) --docker-path $(DOCKER_PATH)
 UP_ARGS := $(DC_ARGS)
 
+# Pass through gitconfig if available
+HOST_GITCONFIG := $(firstword $(wildcard $(HOME)/.gitconfig $(HOME)/.config/git/config))
+ifneq ($(HOST_GITCONFIG),)
+UP_ARGS += --mount "type=bind,source=$(HOST_GITCONFIG),target=/home/dev/.gitconfig"
+endif
+
 ifneq ($(DOTFILES),)
 UP_ARGS += --dotfiles-repository $(DOTFILES) --dotfiles-install-command install.sh
 endif
