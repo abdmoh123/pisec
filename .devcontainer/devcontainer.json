@@ -1,0 +1,31 @@
+{
+    "name": "pisec-dev",
+    "build": { "dockerfile": "Dockerfile" },
+    "updateRemoteUserUID": false,
+    "remoteUser": "dev",
+    "runArgs": [
+        "--userns=keep-id:uid=1000,gid=1000",
+        "--security-opt", "label=disable"
+    ],
+    "features": {
+        "ghcr.io/devcontainers-extra/features/mise:1": {},
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "hverlin.mise-vscode"
+            ]
+        }
+    },
+    "mounts": [
+        "source=${localEnv:SSH_AUTH_SOCK},target=/ssh-agent,type=bind"
+    ],
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached,Z",
+    "workspaceFolder": "/workspace",
+    "containerEnv": {},
+    "remoteEnv": {
+        "SSH_AUTH_SOCK": "/ssh-agent"
+    },
+    "forwardPorts": [8000, 8081, 5037],
+    "postCreateCommand": "bash .devcontainer/post-create.sh"
+}
