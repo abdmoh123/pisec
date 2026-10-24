@@ -2,7 +2,6 @@
 _.file = ".env"
 
 [tools]
-devcontainer-cli = "0.83.0"
 uv = "0.10.0"
 
 [tasks.init]
@@ -75,15 +74,6 @@ run = [
     { task = 'lint' },
     { task = 'test' }
 ]
-
-[tasks.devcontainer]
-description = "Build, start and enter devcontainer"
-run = '''
-#!/usr/bin/env bash
-devcontainer build --docker-path=$DOCKER_PATH
-devcontainer up --dotfiles-repository=https://github.com/abdmoh123/.dotfiles.git --dotfiles-target-path=~ --docker-path=$DOCKER_PATH
-exec devcontainer exec --docker-path=$DOCKER_PATH bash 
-'''
 
 [tasks.clean]
 description = "Clean the project"
