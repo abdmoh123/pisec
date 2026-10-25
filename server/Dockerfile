@@ -21,6 +21,11 @@ RUN uv sync --locked
 
 # Create a non-root system user (/app becomes readonly)
 RUN useradd --system --no-create-home pisec-server
+
+# Create data directory with permissions
+ENV VIDEO_DIR=/data/videos/
+RUN mkdir -p "$VIDEO_DIR" && chown pisec-server "$VIDEO_DIR"
+
 USER pisec-server
 
 # Set env variables relating to project itself
