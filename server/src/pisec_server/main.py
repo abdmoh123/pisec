@@ -52,7 +52,7 @@ cli_app = typer.Typer()
 
 
 @cli_app.command()
-def serve(host: str = "127.0.0.1", port: int = 8000, reload: bool = True) -> None:
+def serve(host: str = "127.0.0.1", port: int = 8000, reload: bool = False) -> None:
     """Main file entrypoint."""
     uvicorn.run("pisec_server.main:app", host=host, port=port, reload=reload)
 
