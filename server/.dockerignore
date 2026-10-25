@@ -4,11 +4,26 @@
 .gitignore
 .gitattributes
 
-.venv
-venv
-.mypy_cache
-.ruff_cache
-__pycache__
+.venv*/
+venv*/
+
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+
+**/__pycache__
+**/*.pyc
+
+.env
+.env.*
+
+**/.config/mise/
+**/.mise/
+**/mise.toml
+**/.mise.toml
+**/mise.local.toml
+**/.mise.local.toml
+**/mise.lock
 
 Dockerfile
 .dockerignore

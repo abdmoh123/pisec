@@ -1,19 +1,33 @@
 # syntax=docker/dockerfile:1
 
-FROM docker.io/ubuntu:24.04
+FROM ghcr.io/astral-sh/uv:python3.13-trixie-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    UV_COMPILE_BYTECODE=0 \
+    UV_NO_DEV=1 \
+    UV_PROJECT_ENVIRONMENT=/usr/local
 
 # Create and switch to work directory
-WORKDIR /usr/src/pi-security-camera/server
+WORKDIR /app
 
-# Install uv
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+# Installs dependencies via uv venv 
+COPY pyproject.toml uv.lock ./
+RUN uv sync --locked --no-install-project
 
-# Installs dependencies via uv venv
-COPY pyproject.toml uv.lock .
-RUN uv sync --frozen
+# Copies the source code in and installs it
+COPY . ./
+RUN uv sync --locked
 
-# Copies the source code in
-COPY . .
+# Create a non-root system user (/app becomes readonly)
+RUN useradd --system --no-create-home pisec-server
+USER pisec-server
+
+# Set env variables relating to project itself
+ENV HOST=0.0.0.0 \
+    PORT=8000
+
+EXPOSE ${PORT}
 
 # Run FastAPI server
-CMD ["uv", "run", "fastapi", "dev", "main.py", "--host", "0.0.0.0", "--port", "8000"]
+CMD exec pisec-server --host "$HOST" --port "$PORT"
