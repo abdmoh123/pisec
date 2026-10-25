@@ -2,7 +2,7 @@
 _.file = ".env"
 
 [tools]
-uv = "0.10.0"
+uv = "0.13.5"
 
 [tasks.init]
 description = "Initialize the project and install all dependencies"

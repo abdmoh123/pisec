@@ -3,7 +3,7 @@ name = "pisec-server"
 version = "0.1.1"
 description = "Central API server for Pisec"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.14"
 dependencies = [
     "aiofiles>=25.1.0",
     "alembic>=1.18.4",
