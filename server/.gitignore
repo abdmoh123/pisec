@@ -20,6 +20,7 @@ alembic.ini
 
 # Sensitive environment variables
 .env
+.*.env
 
 # Other
 *.bak
