@@ -21,6 +21,9 @@ alembic.ini
 # Sensitive environment variables
 .env
 .*.env
+mise.local.toml
+.mise.toml
+.mise.local.toml
 
 # Other
 *.bak
