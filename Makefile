@@ -10,7 +10,7 @@
 #   make dev DOTFILES=https://github.com/you/dotfiles
 
 CONFIG      := .devcontainer/devcontainer.json
-DOCKER_PATH ?= /usr/bin/docker
+DOCKER_PATH ?= docker
 SHELL_CMD   ?= bash
 DOTFILES    ?=
 

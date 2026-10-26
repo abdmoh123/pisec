@@ -1,6 +1,6 @@
 [env]
 _.file = ".env"
-DOCKER_PATH = "/usr/bin/docker"
+DOCKER_PATH = "docker"
 
 [tools]
 uv = "0.13.5"
