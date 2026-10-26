@@ -34,7 +34,7 @@ fi
 # Choose type of build
 case "$usage_platform" in
     wheel) CMD="uv build$EXTRA_ARGS" ;;
-    image) CMD="$DOCKER_PATH build ." ;;
+    image) CMD="$DOCKER_PATH build -t pisec-server ." ;;
 esac
 
 # Print the command if dry running instead of running the command
