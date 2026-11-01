@@ -19,6 +19,13 @@ jobs:
       run:
         working-directory: ./client
     steps:
+      - name: Parse version
+        id: version
+        run: |
+          tag="${GITHUB_REF_NAME#client/}"
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+          echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
+
       - uses: actions/checkout@v6
         with:
           lfs: true
@@ -42,7 +49,7 @@ jobs:
       - name: copy built apk to artifact folder
         run: |
           cp build/app/outputs/flutter-apk/app-release.apk \
-            artifacts/pisec-${GITHUB_REF_NAME#client/}.apk
+            artifacts/pisec-${{ steps.version.outputs.tag }}.apk
 
       - name: install required packages for linux build
         run: |
@@ -61,10 +68,10 @@ jobs:
 
       - name: bundle up linux app into tarball
         run: |
-          tar -czf pisec-${GITHUB_REF_NAME#client/}-linux-x64.tar.gz \
+          tar -czf pisec-${{ steps.version.outputs.tag }}-linux-x64.tar.gz \
             -C build/linux/x64/release/bundle \
             .
-          mv pisec-${GITHUB_REF_NAME#client/}-linux-x64.tar.gz artifacts/
+          mv pisec-${{ steps.version.outputs.tag }}-linux-x64.tar.gz artifacts/
 
       - name: upload all build artifacts
         uses: actions/upload-artifact@v4
@@ -79,9 +86,17 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Parse version
+        id: version
+        run: |
+          tag="${GITHUB_REF_NAME#client/}"
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+          echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
+
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+
       - uses: actions/download-artifact@v4
         with:
           name: release-files.client
@@ -92,7 +107,7 @@ jobs:
 
       - name: extract changes from changelog
         run: |
-          VERSION="${GITHUB_REF_NAME#client/}"
+          VERSION="${{ steps.version.outputs.tag }}"
           python3 ".github/scripts/read_changelog" "$VERSION" "client/CHANGELOG.md" > "RELEASE_NOTES.md"
 
       - name: create github release

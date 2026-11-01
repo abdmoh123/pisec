@@ -38,9 +38,17 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Parse version
+        id: version
+        run: |
+          tag="${GITHUB_REF_NAME#camera/}"
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+          echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
+
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+
       - uses: actions/download-artifact@v4
         with:
           name: release-files.camera
@@ -48,7 +56,7 @@ jobs:
 
       - name: extract changes from changelog
         run: |
-          VERSION="${GITHUB_REF_NAME#camera/}"
+          VERSION="${{ steps.version.outputs.tag }}"
           python3 ".github/scripts/read_changelog" "$VERSION" "camera/CHANGELOG.md" > "RELEASE_NOTES.md"
 
       - name: create github release
