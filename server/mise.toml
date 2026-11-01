@@ -17,7 +17,6 @@ uv sync --frozen --dev
 description = "Builds the python wheel"
 usage = '''
 arg "<platform>" default="wheel" help="Type of build" { choices "wheel" "image" }
-flag "--env-file <envfile>" help="Which env file to use" default="./.env"
 flag "-v --verbose" help="Run in verbose mode (only when building wheel)"
 flag "-n --dry-run" help="Output what command would be run"
 '''
@@ -42,11 +41,6 @@ if [ "${usage_dry_run:-false}" = "true" ]; then
     echo $CMD
     exit 0
 fi
-
-# Export env variables
-set -a
-source $usage_env_file
-set +a
 
 $CMD
 '''
