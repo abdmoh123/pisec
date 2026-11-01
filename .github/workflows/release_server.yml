@@ -120,7 +120,7 @@ jobs:
       - name: Build and push to GitHub
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ./server
           file: ./Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
