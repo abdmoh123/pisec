@@ -110,7 +110,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: "${{ env.REGISTRY }}/pisec-server"
+          images: "${{ env.REGISTRY }}/${{ github.repository_owner }}/pisec-server"
           tags: |
             type=raw,value=latest,enable=${{ steps.version.outputs.is_prerelease == 'false' }}
             type=sha
@@ -127,5 +127,3 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
- 
- 
