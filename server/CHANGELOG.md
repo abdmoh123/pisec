@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-11-01
+
+### Added
+
+- Docker image build target
+
+### Changed
+
+- Upgraded to python 3.14 and uv 0.13.5
+- Reload on file change no longer enabled by default
+
 ## [0.1.1] - 2026-10-18
 
 ### Fixed
