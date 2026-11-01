@@ -1,0 +1,36 @@
+name: parse-version
+description: Parses a <module>/vX.X.X[-rcX] git tag into usable values
+
+inputs:
+  prefix:
+    description: Tag prefix (module) to strip (excluding trailing slash)
+    required: true
+ 
+outputs:
+  is_prerelease:
+    description: "true if the version has a prerelease like (e.g. -rc1)"
+    value: ${{ steps.parse.outputs.is_prerelease }}
+  tag:
+    description: "Version number including the v prefix, e.g. v1.4.2"
+    value: ${{ steps.parse.outputs.tag }}
+  version:
+    description: "Version number without the v prefix, e.g. 1.4.2"
+    value: ${{ steps.parse.outputs.version }}
+ 
+runs:
+  using: composite
+  steps:
+    - name: Parse version from tag
+      id: parse
+      shell: bash
+      env:
+        PREFIX: ${{ inputs.prefix }}
+      run: |
+        tag="${GITHUB_REF_NAME#$PREFIX/}"
+        echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+        echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
+        if [[ "$version" == *-* ]]; then
+          echo "is_prerelease=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "is_prerelease=false" >> "$GITHUB_OUTPUT"
+        fi

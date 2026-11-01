@@ -25,15 +25,7 @@ jobs:
 
       - name: Parse version
         id: version
-        run: |
-          tag="${GITHUB_REF_NAME#client/}"
-          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
-          echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
-          if [[ "$version" == *-*]]; then
-            echo "is_prerelease=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "is_prerelease=false" >> "$GITHUB_OUTPUT"
-          fi
+        uses: ./.github/actions/parse-version
 
       - uses: jdx/mise-action@v4
         with:
@@ -97,15 +89,7 @@ jobs:
 
       - name: Parse version
         id: version
-        run: |
-          tag="${GITHUB_REF_NAME#client/}"
-          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
-          echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
-          if [[ "$version" == *-*]]; then
-            echo "is_prerelease=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "is_prerelease=false" >> "$GITHUB_OUTPUT"
-          fi
+        uses: ./.github/actions/parse-version
 
       - uses: actions/download-artifact@v4
         with:
