@@ -3,7 +3,7 @@ name = "pisec-cam"
 version = "0.1.0"
 description = "Camera service client app for the Pisec system"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.14"
 dependencies = [
     "httpx2>=2.13.1",
     "opencv-python>=4.13.0.92",
@@ -25,7 +25,7 @@ dev = [
 pisec-cam = "pisec_cam.main:app"
 
 [build-system]
-requires = ["uv_build>=0.11.26,<0.12"]
+requires = ["uv_build>=0.13.5,<0.14"]
 build-backend = "uv_build"
 
 [tool.uv.build-backend]
