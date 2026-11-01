@@ -44,6 +44,11 @@ jobs:
           tag="${GITHUB_REF_NAME#camera/}"
           echo "tag=${tag}" >> "$GITHUB_OUTPUT"
           echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
+          if [[ "$version" == *-*]]; then
+            echo "is_prerelease=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "is_prerelease=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - uses: actions/checkout@v6
         with:
