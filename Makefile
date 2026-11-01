@@ -31,13 +31,17 @@ ifneq ($(DOTFILES),)
 UP_ARGS += --dotfiles-repository $(DOTFILES) --dotfiles-install-command install.sh
 endif
 
-.PHONY: up enter rebuild down
+.PHONY: up enter up-enter rebuild down
 
 up:
 	devcontainer up $(UP_ARGS)
 
 enter:
 	devcontainer exec $(DC_ARGS) $(SHELL_CMD)
+
+up-enter:
+	$(MAKE) up
+	$(MAKE) enter
 
 rebuild:
 	devcontainer up $(UP_ARGS) --remove-existing-container --build-no-cache
