@@ -26,6 +26,8 @@ jobs:
       - name: Parse version
         id: version
         uses: ./.github/actions/parse-version
+        with:
+          prefix: client
 
       - uses: jdx/mise-action@v4
         with:
@@ -90,6 +92,8 @@ jobs:
       - name: Parse version
         id: version
         uses: ./.github/actions/parse-version
+        with:
+          prefix: client
 
       - uses: actions/download-artifact@v4
         with:
@@ -101,8 +105,8 @@ jobs:
 
       - name: extract changes from changelog
         run: |
-          VERSION="${{ steps.version.outputs.tag }}"
-          python3 ".github/scripts/read_changelog" "$VERSION" "client/CHANGELOG.md" > "RELEASE_NOTES.md"
+          CHANGELOG_VERSION="${{ steps.version.outputs.tag }}"
+          python3 ".github/scripts/read_changelog" "$CHANGELOG_VERSION" "client/CHANGELOG.md" > "RELEASE_NOTES.md"
 
       - name: create github release
         env:

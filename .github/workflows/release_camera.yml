@@ -48,6 +48,8 @@ jobs:
       - name: Parse version
         id: version
         uses: ./.github/actions/parse-version
+        with:
+          prefix: camera
 
       - uses: actions/download-artifact@v4
         with:
@@ -56,8 +58,8 @@ jobs:
 
       - name: extract changes from changelog
         run: |
-          VERSION="${{ steps.version.outputs.tag }}"
-          python3 ".github/scripts/read_changelog" "$VERSION" "camera/CHANGELOG.md" > "RELEASE_NOTES.md"
+          CHANGELOG_VERSION="${{ steps.version.outputs.tag }}"
+          python3 ".github/scripts/read_changelog" "$CHANGELOG_VERSION" "camera/CHANGELOG.md" > "RELEASE_NOTES.md"
 
       - name: create github release
         env:
