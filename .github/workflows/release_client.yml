@@ -19,6 +19,10 @@ jobs:
       run:
         working-directory: ./client
     steps:
+      - uses: actions/checkout@v6
+        with:
+          lfs: true
+
       - name: Parse version
         id: version
         run: |
@@ -30,10 +34,6 @@ jobs:
           else
             echo "is_prerelease=false" >> "$GITHUB_OUTPUT"
           fi
-
-      - uses: actions/checkout@v6
-        with:
-          lfs: true
 
       - uses: jdx/mise-action@v4
         with:
@@ -91,6 +91,10 @@ jobs:
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
       - name: Parse version
         id: version
         run: |
@@ -102,10 +106,6 @@ jobs:
           else
             echo "is_prerelease=false" >> "$GITHUB_OUTPUT"
           fi
-
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
 
       - uses: actions/download-artifact@v4
         with:
