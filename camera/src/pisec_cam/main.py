@@ -29,7 +29,7 @@ def serve(
     wait_time_ms: int = 1000,
     delta_ms: int = 500,
     video_length_s: int = 10,
-    video_dir: str = "./recordings",
+    video_dir: str | None = None,
     max_files: int = 5,
 ) -> None:
     """Runs the motion detection service.
@@ -41,15 +41,15 @@ def serve(
             Defaults to 500ms (0.5s).
         video_length_s: The number of seconds to record a video.
             Defaults to 10s.
-        video_dir: The directory (string) to save the video to.
-            Defaults to "./recordings".
+        video_dir: An override for the directory (string) to save the video to.
+            Defaults to the environment variable value (<data_dir>/recordings).
         max_files: The maximum number of files to keep in the directory.
             Defaults to 5 files.
     """
     # Prepare things before starting the FSM
-    video_dir_path: Path = Path(video_dir).resolve()
-    if not video_dir_path.exists():
-        raise FileNotFoundError(video_dir_path)
+    env_video_dir = settings.video_dir
+    video_dir_path = Path(video_dir or env_video_dir).resolve()
+    video_dir_path.mkdir(parents=True, exist_ok=True)
 
     # Ensure all the required data for using the API exists
     loop_policy_type = settings.loop_policy_type
@@ -79,34 +79,42 @@ def serve(
 
 
 @app.command()
-def record(seconds: int = 600, video_dir: str = "./recordings") -> None:
+def record(seconds: int = 600, video_dir: str | None = None) -> None:
     """Starts the camera recording routine.
 
     Args:
         seconds: The number of seconds to record.
             Defaults to 600s (10mins).
-        video_dir: The directory (string) to save the video to.
-            Defaults to "./recordings".
+        video_dir: An override for the directory (string) to save the video to.
+            Defaults to the environment variable value (<data_dir>/recordings).
     """
+    env_video_dir = settings.video_dir
+    video_dir_path = Path(video_dir or env_video_dir).resolve()
+    video_dir_path.mkdir(parents=True, exist_ok=True)
+
     with OpenCVCamera() as camera:
         # Negative max_files disables the check
-        file_manager = FileManager(Path(video_dir), max_files=-1)
+        file_manager = FileManager(video_dir_path, max_files=-1)
         serializer = OpenCVSerializer()
         camera_service = CameraService(camera, serializer, file_manager)
         camera_service.record_video(seconds)
 
 
 @app.command()
-def shoot(photo_dir: str = "./photos") -> None:
+def shoot(photo_dir: str | None = None) -> None:
     """Captures the current frame from the camera.
 
     Args:
-        photo_dir: The directory (string) to save the photo to.
-            Defaults to "./photos".
+        photo_dir: An override for the directory (string) to save the photo to.
+            Defaults to the environment variable value (<data_dir>/photos).
     """
+    env_photo_dir = settings.photo_dir
+    photo_dir_path = Path(photo_dir or env_photo_dir).resolve()
+    photo_dir_path.mkdir(parents=True, exist_ok=True)
+
     with OpenCVCamera() as camera:
         # Negative max_files disables the check
-        file_manager = FileManager(Path(photo_dir), max_files=-1)
+        file_manager = FileManager(photo_dir_path, max_files=-1)
         serializer = OpenCVSerializer()
         camera_service = CameraService(camera, serializer, file_manager)
         camera_service.take_photo()
