@@ -4,6 +4,7 @@ import os
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from pisec_cam.core.exceptions.platform import UnsupportedPlatformError
 from pisec_cam.core.types.camera_type import CameraType
 from pisec_cam.core.types.loop_policy_type import LoopPolicyType
 
@@ -16,7 +17,9 @@ def get_default_data_dir() -> Path:
         case "nt":
             return Path.home() / Path("AppData/Local/Roaming/pisec-cam")
         case _:
-            raise Exception("Unsupported platform")
+            raise UnsupportedPlatformError(
+                platform=os.name, message="Unable to get default data directory"
+            )
 
 
 @dataclass(frozen=True)
