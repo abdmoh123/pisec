@@ -1,6 +1,7 @@
 [env]
 _.file = ".env"
 DATA_DIR = "data/"
+DOCKER_PATH = "docker"
 
 [tools]
 uv = "0.13.5"
@@ -15,7 +16,35 @@ uv sync --frozen --dev
 
 [tasks.build]
 description = "Builds the python wheel"
-run = "uv build"
+usage = '''
+arg "<platform>" default="wheel" help="Type of build" { choices "wheel" "image" }
+flag "-v --verbose" help="Run in verbose mode (only when building wheel)"
+flag "-n --dry-run" help="Output what command would be run"
+'''
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Add verbose flag if specified
+EXTRA_ARGS=""
+if [ "${usage_verbose:-false}" = "true" ]; then
+    EXTRA_ARGS=" --verbose"
+fi
+
+# Choose type of build
+case "$usage_platform" in
+    wheel) CMD="uv build$EXTRA_ARGS" ;;
+    image) CMD="$DOCKER_PATH build -t pisec-cam ." ;;
+esac
+
+# Print the command if dry running instead of running the command
+if [ "${usage_dry_run:-false}" = "true" ]; then
+    echo $CMD
+    exit 0
+fi
+
+$CMD
+'''
 
 [tasks.ruff]
 description = "Run ruff linter"
