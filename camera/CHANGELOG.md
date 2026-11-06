@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Docker image release
+
+### Changed
+
+- Video and photo directories are set by DATA_DIR environment variable by default
+- OpenCV now headless
+- Updated to python 3.14 and uv 0.13.5
+
 ## [0.1.0] - 2026-10-10
 
 ### Added
