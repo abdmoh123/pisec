@@ -20,21 +20,21 @@ def test_get_mac_address() -> None:
         case "posix":
             res = subprocess.run(
                 ["ip", "link", "show"],
+                check=False,
                 capture_output=True,
                 text=True,
             )
-            if res.returncode != 0:
-                raise Exception(res.stderr)
+            assert res.returncode == 0
 
             actual_mac_address_content = res.stdout
         case "nt":
             res = subprocess.run(
                 ["ipconfig", "/all"],
+                check=False,
                 capture_output=True,
                 text=True,
             )
-            if res.returncode != 0:
-                raise Exception(res.stderr)
+            assert res.returncode != 0
 
             split_stdout = res.stdout.split("\n")
             mac_address_lines = [
@@ -44,6 +44,6 @@ def test_get_mac_address() -> None:
             ]
             actual_mac_address_content = "\n".join(mac_address_lines)
         case _:
-            raise Exception("Unsupported platform")
+            assert False
 
     assert mac_address in actual_mac_address_content
