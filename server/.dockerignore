@@ -19,6 +19,7 @@ tests/
 **/*.pyc
 
 data/
+src/pisec_server/data/
 **/*.db
 
 .env

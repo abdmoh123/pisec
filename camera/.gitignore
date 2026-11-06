@@ -11,6 +11,10 @@ wheels/
 
 # Sensitive environment variables
 .env
+.*.env
+mise.local.toml
+.mise.toml
+.mise.local.toml
 
 # Generated photos and video at default paths
 recordings/
