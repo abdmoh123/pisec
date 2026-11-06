@@ -1,7 +1,7 @@
 """Module for generating file names."""
 
 import datetime
-from typing import Callable
+from collections.abc import Callable
 
 __timestamp_format: str = "%Y-%m-%d_%H-%M-%S"
 

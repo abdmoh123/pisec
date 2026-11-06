@@ -28,7 +28,7 @@ class OAuth2Authenticator(httpx2.Auth):
         self._max_auth_retries: int = max_retries
 
     @override
-    def auth_flow(self, request: Request) -> Generator[Request, Response, None]:
+    def auth_flow(self, request: Request) -> Generator[Request, Response]:
         if self._access_token is None:
             token_response = yield self._build_token_request()
             _ = token_response.read()

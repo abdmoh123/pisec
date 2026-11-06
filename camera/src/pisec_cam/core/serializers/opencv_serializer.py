@@ -34,8 +34,10 @@ class OpenCVSerializer:
         writer_error: Exception | None = None
         try:
             for frame in data:
-                out.write(frame)
-        except Exception as e:
+                _ = out.write(frame)
+        except Exception as e:  # noqa: BLE001
+            # Prevent any error from raising so it can be converged to
+            # SerializationError below
             writer_error = e
         finally:
             # Ensure that the video writer is closed

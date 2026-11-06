@@ -33,7 +33,7 @@ class SurveillanceSystem:
         (CameraState.DETECTING, CameraEvent.SAVE)
     ]
 
-    def events(self) -> Generator[CameraEvent, None, None]:
+    def events(self) -> Generator[CameraEvent]:
         """Iterates through the event loop of the camera system."""
         while True:
             for event in SurveillanceSystem._event_loop:

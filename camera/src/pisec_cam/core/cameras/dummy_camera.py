@@ -34,7 +34,7 @@ class DummyCamera:
         """Releases the camera."""
         self.disable()
 
-    def _frames(self) -> Generator[MatLike, None, None]:
+    def _frames(self) -> Generator[MatLike]:
         """A generator simulating a stream of frames from of a camera.
 
         Every 9 frames, the camera will swap between black and white.

@@ -24,7 +24,7 @@ def _motion_detect_guard(context: CameraCtx) -> bool:
     CameraEvent.RECORD,
     _motion_detect_guard,
 )
-def _record_action(context: CameraCtx) -> None:  # pyright: ignore[reportUnusedFunction]
+def _record_action(context: CameraCtx) -> None:
     context.data = context.camera.start_recording(
         context.settings.video_length_s
     )
@@ -35,14 +35,14 @@ def _record_action(context: CameraCtx) -> None:  # pyright: ignore[reportUnusedF
     CameraState.DETECTING,
     CameraEvent.RECORD,
 )
-def _skip_record_action(_: CameraCtx) -> None:  # pyright: ignore[reportUnusedFunction]
+def _skip_record_action(_: CameraCtx) -> None:
     print("Motion not detected, skipping recording...")
 
 
 @camera_fsm.transition(
     CameraState.RECORDING, CameraState.SAVING, CameraEvent.SAVE
 )
-def _save_action(context: CameraCtx) -> None:  # pyright: ignore[reportUnusedFunction]
+def _save_action(context: CameraCtx) -> None:
     if not context.data:
         raise ValueError("No data to save")
 
@@ -57,7 +57,7 @@ def _save_action(context: CameraCtx) -> None:  # pyright: ignore[reportUnusedFun
     CameraState.SLEEPING,
     CameraEvent.SLEEP,
 )
-def _sleep_action(context: CameraCtx) -> None:  # pyright: ignore[reportUnusedFunction]
+def _sleep_action(context: CameraCtx) -> None:
     print(f"Sleeping for {context.settings.wait_time_ms // 1000} seconds...")
     time.sleep(context.settings.wait_time_ms // 1000)
 
@@ -65,7 +65,7 @@ def _sleep_action(context: CameraCtx) -> None:  # pyright: ignore[reportUnusedFu
 @camera_fsm.transition(
     CameraState.SLEEPING, CameraState.DETECTING, CameraEvent.WAKE
 )
-def _wake_action(context: CameraCtx) -> None:  # pyright: ignore[reportUnusedFunction, reportUnusedParameter]
+def _wake_action(context: CameraCtx) -> None:  # pyright: ignore[reportUnusedParameter]
     print("Waking up...")
 
 
@@ -79,7 +79,7 @@ def _wake_action(context: CameraCtx) -> None:  # pyright: ignore[reportUnusedFun
     CameraState.STOPPED,
     CameraEvent.STOP,
 )
-def _shutdown(context: CameraCtx) -> None:  # pyright: ignore[reportUnusedFunction]
+def _shutdown(context: CameraCtx) -> None:
     if context.error:
         print(f"Error has occured: {context.error}")
     print("Shutting down...")

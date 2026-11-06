@@ -3,6 +3,7 @@
 from dataclasses import dataclass, field
 from pathlib import Path
 from types import TracebackType
+from typing import Self
 
 import httpx2
 from httpx2 import ConnectError, Response
@@ -32,7 +33,7 @@ class APIService:
             base_url=self.context.api_url, auth=self.context.authenticator
         )
 
-    def __enter__(self) -> "APIService":
+    def __enter__(self) -> Self:
         """Context manager entry point."""
         return self
 

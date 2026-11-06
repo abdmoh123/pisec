@@ -37,5 +37,6 @@ class APILoopPolicy(AbstractLoopPolicy):
                         api_service.upload_video(
                             self.camera_system.context.file_manager.get_latest_file()
                         )
-                    except Exception as e:
+                    except Exception as e:  # noqa: BLE001
+                        # All potential errors should be handled
                         print(e)

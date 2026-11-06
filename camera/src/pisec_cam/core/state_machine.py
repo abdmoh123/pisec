@@ -1,10 +1,9 @@
 """State machine implementation. Based off ArjanCode's implementation."""
 
 from abc import ABC
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
 from enum import Enum, StrEnum
-from typing import Callable
 
 from pisec_cam.core.exceptions.state_machine import TransitionError
 
@@ -99,7 +98,8 @@ class StateMachine[S: Enum, E: Enum, C: SMContext]:
                 try:
                     action(context)
                     return next_state
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001
+                    # Handle any error that occurs
                     context.error = e
                     return self.handle_event(state, self.error_event, context)
 
