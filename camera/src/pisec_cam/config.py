@@ -37,6 +37,11 @@ class Settings:
             os.environ.get("CAMERA_TYPE", "opencv")
         )
     )
+
+    opencv_camera_id: int = field(
+        default_factory=lambda: int(os.environ.get("OPENCV_CAMERA_ID") or 0)
+    )
+
     loop_policy_type: LoopPolicyType = field(
         default_factory=lambda: LoopPolicyType(
             os.environ.get("LOOP_POLICY_TYPE", "api")

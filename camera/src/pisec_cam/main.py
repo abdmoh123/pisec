@@ -79,7 +79,11 @@ def serve(
 
 
 @app.command()
-def record(seconds: int = 600, video_dir: str | None = None) -> None:
+def record(
+    seconds: int = 600,
+    video_dir: str | None = None,
+    opencv_cam_id: int | None = None,
+) -> None:
     """Starts the camera recording routine.
 
     Args:
@@ -87,12 +91,16 @@ def record(seconds: int = 600, video_dir: str | None = None) -> None:
             Defaults to 600s (10mins).
         video_dir: An override for the directory (string) to save the video to.
             Defaults to the environment variable value (<data_dir>/recordings).
+        opencv_cam_id: An override for the camera ID to pass into opencv.
+            Defaults to the environment variable (0 by default).
     """
     env_video_dir = settings.video_dir
     video_dir_path = Path(video_dir or env_video_dir).resolve()
     video_dir_path.mkdir(parents=True, exist_ok=True)
 
-    with OpenCVCamera() as camera:
+    camera_id = opencv_cam_id or settings.opencv_camera_id
+
+    with OpenCVCamera(camera_id) as camera:
         # Negative max_files disables the check
         file_manager = FileManager(video_dir_path, max_files=-1)
         serializer = OpenCVSerializer()
@@ -101,18 +109,24 @@ def record(seconds: int = 600, video_dir: str | None = None) -> None:
 
 
 @app.command()
-def shoot(photo_dir: str | None = None) -> None:
+def shoot(
+    photo_dir: str | None = None, opencv_cam_id: int | None = None
+) -> None:
     """Captures the current frame from the camera.
 
     Args:
         photo_dir: An override for the directory (string) to save the photo to.
             Defaults to the environment variable value (<data_dir>/photos).
+        opencv_cam_id: An override for the camera ID to pass into opencv.
+            Defaults to the environment variable (0 by default).
     """
     env_photo_dir = settings.photo_dir
     photo_dir_path = Path(photo_dir or env_photo_dir).resolve()
     photo_dir_path.mkdir(parents=True, exist_ok=True)
 
-    with OpenCVCamera() as camera:
+    camera_id = opencv_cam_id or settings.opencv_camera_id
+
+    with OpenCVCamera(camera_id) as camera:
         # Negative max_files disables the check
         file_manager = FileManager(photo_dir_path, max_files=-1)
         serializer = OpenCVSerializer()

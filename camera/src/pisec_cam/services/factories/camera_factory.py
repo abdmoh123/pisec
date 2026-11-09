@@ -1,5 +1,6 @@
 """Factory for choosing between camera types."""
 
+from pisec_cam.config import settings
 from pisec_cam.core.cameras.camera import Camera
 from pisec_cam.core.cameras.dummy_camera import DummyCamera
 from pisec_cam.core.cameras.opencv_camera import OpenCVCamera
@@ -17,6 +18,7 @@ def create_camera(camera_type: CameraType) -> Camera:
     """
     match camera_type:
         case CameraType.OPENCV:
-            return OpenCVCamera()
+            # You can override this by setting the OPENCV_CAMERA_ID env variable
+            return OpenCVCamera(settings.opencv_camera_id)
         case CameraType.DUMMY:
             return DummyCamera()
