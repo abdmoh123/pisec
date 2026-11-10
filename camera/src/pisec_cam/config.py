@@ -22,7 +22,7 @@ def get_default_data_dir() -> Path:
         case "posix":
             return Path.home() / Path(".config/pisec-cam")
         case "nt":
-            return Path.home() / Path("AppData/Local/Roaming/pisec-cam")
+            return Path.home() / Path("AppData/Local/pisec-cam")
         case _:
             raise UnsupportedPlatformError(
                 platform=os.name, message="Unable to get default data directory"
