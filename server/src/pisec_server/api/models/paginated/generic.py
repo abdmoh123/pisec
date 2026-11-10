@@ -1,7 +1,7 @@
 """Paginated model class that query params inherit."""
 
 from collections.abc import Iterable
-from typing import Annotated, Generic, TypeVar
+from typing import Annotated, TypeVar
 
 from pydantic import BaseModel, Field
 
@@ -19,7 +19,7 @@ class PaginatedParams(BaseModel):
 T = TypeVar("T", bound=BaseModel)
 
 
-class PaginatedResponse(BaseModel, Generic[T]):
+class PaginatedResponse[T: BaseModel](BaseModel):
     """Re-usable model for returning paginated results."""
 
     items: Annotated[list[T], Field()]
@@ -29,7 +29,7 @@ class PaginatedResponse(BaseModel, Generic[T]):
     total_pages: Annotated[int, Field(ge=0)]
 
     @classmethod
-    def create(cls, items: Iterable[T], page_index: int, page_size: int, total_items: int) -> "PaginatedResponse[T]":
+    def create(cls, items: Iterable[T], page_index: int, page_size: int, total_items: int) -> PaginatedResponse[T]:
         """Creates a paginated response and auto-generates the total pages."""
         # Ceiling division
         total_pages: int = (total_items + page_size - 1) // page_size

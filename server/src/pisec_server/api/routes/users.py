@@ -44,7 +44,7 @@ def get_self_cameras(
 ) -> PaginatedResponse[CameraResponse]:
     """Returns a user's subscribed cameras."""
 
-    def owned_camera_filter(q: Select[tuple[CameraSchema]]) -> Select[tuple[CameraSchema]]:
+    def owned_camera_filter(q: Select[CameraSchema]) -> Select[CameraSchema]:
         if not params.only_owned:
             return q
 

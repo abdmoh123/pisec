@@ -1,11 +1,11 @@
 """Module handling video download tokens."""
 
 import secrets
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
-import pisec_server.services.hmac_encoder as hmac_encoder
 from pisec_server.core.config import settings
 from pisec_server.core.models.video_token import DecodedVideoTokenPayload, VideoTokenRecord
+from pisec_server.services import hmac_encoder
 
 
 def generate_signed_download_token(video_id: int, user_id: int) -> VideoTokenRecord:
@@ -21,7 +21,7 @@ def generate_signed_download_token(video_id: int, user_id: int) -> VideoTokenRec
     # Used to identify the temporary token
     nonce: str = secrets.token_urlsafe(16)
 
-    expires_at = datetime.now(timezone.utc) + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
+    expires_at = datetime.now(UTC) + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
 
     payload = DecodedVideoTokenPayload(user_id, video_id, expires_at, nonce)
 
@@ -46,7 +46,7 @@ def extract_payload(payload_str: str) -> DecodedVideoTokenPayload:
     try:
         expires_at = datetime.fromisoformat(expires_at_str)
         return DecodedVideoTokenPayload(int(user_id_str), int(video_id_str), expires_at, nonce)
-    except Exception:
+    except Exception:  # noqa: BLE001
         raise ValueError("Malformed payload")
 
 
@@ -70,5 +70,5 @@ def assert_token_validity(token_payload: DecodedVideoTokenPayload, video_id: int
     if token_payload.video_id != video_id:
         raise ValueError("Token not valid for this video")
 
-    if token_payload.expires_at < datetime.now(timezone.utc):
+    if token_payload.expires_at < datetime.now(UTC):
         raise ValueError("Token expired")

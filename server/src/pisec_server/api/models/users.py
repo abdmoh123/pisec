@@ -34,7 +34,6 @@ class User(UserWithPassword):
 class UserCreate(UserWithPassword):
     """Request body input as a class for creating a new user."""
 
-    pass
 
 
 class UserUpdate(BaseModel):

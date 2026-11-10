@@ -51,7 +51,7 @@ def get_cameras(
     Non-admin users can only see cameras they are subscribed to.
     """
 
-    def admin_filter(q: Select[tuple[CameraSchema]]) -> Select[tuple[CameraSchema]]:
+    def admin_filter(q: Select[CameraSchema]) -> Select[CameraSchema]:
         if current_user.is_admin:
             return q
 

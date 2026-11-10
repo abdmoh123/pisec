@@ -1,6 +1,6 @@
 """File containing crud functions related to the Camera table."""
 
-from typing import Callable
+from collections.abc import Callable
 
 from sqlalchemy import Select, select
 from sqlalchemy.orm import Session
@@ -11,6 +11,8 @@ from pisec_server.api.models.types.camera_columns import CameraColumns
 from pisec_server.core.exceptions import RecordNotFoundError
 from pisec_server.db.db_models import Camera, User
 from pisec_server.services.pagination import paginate
+
+type CameraFilterFunc = Callable[[Select[Camera]], Select[Camera]]
 
 
 def get_camera(db: Session, camera_id: int) -> Camera | None:
@@ -28,7 +30,7 @@ def get_cameras(
     limit: int = 100,
     order_by: CameraColumns = CameraColumns.ID,
     ascending: bool = True,
-    with_filter: Callable[[Select[tuple[Camera]]], Select[tuple[Camera]]] | None = None,
+    with_filter: CameraFilterFunc | None = None,
 ) -> PaginatedResponse[CameraResponse]:
     """Queries and returns a list of cameras with pagination.
 

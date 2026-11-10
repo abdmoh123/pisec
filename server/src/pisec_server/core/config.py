@@ -101,11 +101,11 @@ class Settings:
 
     VIDEO_FILES_DIR: Path = field(default_factory=_get_video_dir)
 
-    DB_TYPE: DBType = _get_db_type()
+    DB_TYPE: DBType = field(default_factory=lambda: _get_db_type())
     DB_URL: str = _get_db_url(DB_TYPE)
 
     SECRET_KEY: str = _get_secret()  # Generate a random one with `openssl rand -hex 32`
-    JWT_ALGORITHM: JWTAlgorithm = _get_jwt_algorithm()  # Default to HS256
+    JWT_ALGORITHM: JWTAlgorithm = field(default_factory=lambda: _get_jwt_algorithm())  # Default to HS256
 
     HMAC_SECRET_KEY: str = _get_hmac_secret()
     VIDEO_TOKEN_EXPIRE_MINUTES: int = 10
@@ -117,7 +117,9 @@ class Settings:
 
     # Admin bootstrapping
     # The first registered user will automatically become an admin if this is enabled
-    ENABLE_FIRST_USER_ADMIN: bool = os.getenv("ENABLE_FIRST_USER_ADMIN", "true").lower() == "true"
+    ENABLE_FIRST_USER_ADMIN: bool = field(
+        default_factory=lambda: os.getenv("ENABLE_FIRST_USER_ADMIN", "true").lower() == "true"
+    )
 
 
 def init_settings(config: Settings) -> None:

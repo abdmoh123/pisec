@@ -72,7 +72,7 @@ db_connector = GeneralDBConnector(
 """FastAPI dependency overrides."""
 
 
-def get_test_db() -> Generator[Session, None, None]:
+def get_test_db() -> Generator[Session]:
     """Returns a test instance of the database that you can query against. This overrides a dependency."""
     db: Session = db_connector.get_session()
     try:
@@ -99,7 +99,7 @@ def get_current_test_admin_user() -> User:
 
 
 @pytest.fixture()
-def client() -> Generator[TestClient, None, None]:
+def client() -> Generator[TestClient]:
     """Fixture for getting a fastapi test client."""
     # Reset the database contents
     Base.metadata.drop_all(bind=db_connector.get_engine())

@@ -3,7 +3,7 @@
 import asyncio
 from asyncio import Lock
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from pisec_server.core.exceptions import RecordAlreadyExistsError
 from pisec_server.core.models.nonceable import Nonceable
@@ -24,7 +24,7 @@ class InMemoryVideoNonceStore:
     """
 
     _nonces: dict[str, NonceEntry] = field(default_factory=dict[str, NonceEntry])
-    _lock: Lock = asyncio.Lock()
+    _lock: Lock = field(default_factory=lambda: asyncio.Lock())
 
     async def nonce_exists(self, nonce: str) -> bool:
         """Checks if a given nonce exists in the cache.
@@ -55,7 +55,7 @@ class InMemoryVideoNonceStore:
     async def purge_expired(self) -> None:
         """Removes expired nonces from the cache."""
         async with self._lock:
-            current_time = datetime.now(timezone.utc)
+            current_time = datetime.now(UTC)
             expired_nonces = [nonce for nonce, entry in self._nonces.items() if entry.expires_at < current_time]
 
             for nonce in expired_nonces:

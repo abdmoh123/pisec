@@ -1,6 +1,7 @@
 """Service functions relating to pagination."""
 
-from typing import Callable, TypeVar
+from collections.abc import Callable
+from typing import TypeVar
 
 from pydantic import BaseModel
 from sqlalchemy import Select, func, select
@@ -12,8 +13,8 @@ T = TypeVar("T", bound=BaseModel)
 M = TypeVar("M")
 
 
-def paginate(
-    db: Session, query: Select[tuple[M]], params: PaginatedParams, to_response: Callable[[M], T]
+def paginate[M, T: BaseModel](
+    db: Session, query: Select[M], params: PaginatedParams, to_response: Callable[[M], T]
 ) -> PaginatedResponse[T]:
     """Runs a given select query and wraps it in a paginated response."""
     count_query = select(func.count()).select_from(query.subquery())

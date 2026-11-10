@@ -70,7 +70,7 @@ def create_db_connector(db_type: DBType) -> DBConnectorProtocol:
             return create_postgres_connector(settings.DB_URL)
 
 
-def get_db() -> Generator[Session, None, None]:
+def get_db() -> Generator[Session]:
     """Returns an instance of the database that you can query against."""
     session = db_connector.get_session()
     try:

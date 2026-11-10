@@ -18,7 +18,7 @@ def get_camera_subscriptions_by_user(db: Session, user_id: int) -> list[CameraSu
         raise RecordNotFoundError(f"User {user_id} does not exist!")
 
     # NOTE: Number of subscriptions could be empty
-    subscriptions: list[CameraSubscription] = list()
+    subscriptions: list[CameraSubscription] = []
     for camera in db_user.cameras:
         subscriptions.append(CameraSubscription(user_id=db_user.id, camera_id=camera.id))
 
@@ -32,7 +32,7 @@ def get_camera_subscriptions_by_camera(db: Session, camera_id: int) -> list[Came
         raise RecordNotFoundError(f"Camera {camera_id} does not exist!")
 
     # NOTE: Number of subscriptions could be empty
-    subscriptions: list[CameraSubscription] = list()
+    subscriptions: list[CameraSubscription] = []
     for user in db_camera.users:
         subscriptions.append(CameraSubscription(user_id=user.id, camera_id=camera_id))
 
@@ -69,7 +69,7 @@ def create_camera_subscriptions_by_user(db: Session, user_id: int, camera_ids: l
         raise RecordAlreadyExistsError(f"User {user_id} is already subscribed to all given cameras!")
 
     # Add the new camera subscriptions
-    result: list[CameraSubscription] = list()
+    result: list[CameraSubscription] = []
     for camera in unsubscribed_cameras:
         result.append(CameraSubscription(user_id=db_user.id, camera_id=camera.id))
 
@@ -95,7 +95,7 @@ def create_camera_subscriptions_by_camera(db: Session, camera_id: int, user_ids:
         raise RecordAlreadyExistsError(f"Camera {camera_id} is already subscribed to all given users!")
 
     # Add the new camera subscriptions
-    result: list[CameraSubscription] = list()
+    result: list[CameraSubscription] = []
     for user in unsubscribed_users:
         result.append(CameraSubscription(user_id=user.id, camera_id=camera_id))
 

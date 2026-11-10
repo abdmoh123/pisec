@@ -54,4 +54,4 @@ def test_verify_password_invalid() -> None:
     test_hashed_password: str = generate_hashed_password(test_password, ph, salt, salt_encoding)
 
     wrong_passwords: list[str] = ["1234", "PASSWORD", "abcABC123"]
-    assert all([not verify_password(wrong_password, test_hashed_password, ph) for wrong_password in wrong_passwords])
+    assert all(not verify_password(wrong_password, test_hashed_password, ph) for wrong_password in wrong_passwords)

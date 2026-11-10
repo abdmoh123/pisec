@@ -1,6 +1,6 @@
 """Module containing functions and dependencies for authentication and authorization."""
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Annotated
 
 from fastapi import Depends, status
@@ -30,7 +30,7 @@ def get_current_user(
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate credentials") from e
 
     # Shouldn't need to check expiry due to ExpiredSignatureError, but kept just in case
-    if payload.exp < datetime.now(timezone.utc):
+    if payload.exp < datetime.now(UTC):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Expired token")
 
     # Check if the token is for a regular user
@@ -65,7 +65,7 @@ def get_current_user_optional(
         return None
 
     # Shouldn't need to check expiry due to ExpiredSignatureError, but kept just in case
-    if payload.exp < datetime.now(timezone.utc):
+    if payload.exp < datetime.now(UTC):
         return None
 
     # Check if the token is for a regular user
@@ -95,7 +95,7 @@ def get_current_credential(
     payload: TokenPayload = decode_access_token(token)
 
     # Shouldn't need to check expiry due to ExpiredSignatureError, but kept just in case
-    if payload.exp < datetime.now(timezone.utc):
+    if payload.exp < datetime.now(UTC):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Expired token")
 
     # Check if the token is for a camera

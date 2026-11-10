@@ -1,6 +1,6 @@
 """Module containing CRUD functions related to authentication and token management."""
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from sqlalchemy import delete
 from sqlalchemy.orm import Session
@@ -20,12 +20,12 @@ def create_refresh_token(db: Session, user_id: int, expires_at: datetime | None 
     """
     # Allows rotation of refresh tokens (better security)
     if expires_at is None:
-        expires_at = datetime.now(timezone.utc) + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
+        expires_at = datetime.now(UTC) + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
 
     # Generate a random string for the refresh token, or a JWT for specific needs
     # For simplicity, let's generate a JWT for the refresh token as well
     # NOTE: This assumes that the user is a normal user
-    issued_at = datetime.now(timezone.utc)
+    issued_at = datetime.now(UTC)
     refresh_token = encode_token(
         TokenHeader(alg=settings.JWT_ALGORITHM),
         TokenPayload(sub=str(user_id), sub_type=TokenSubjectType.USER, exp=expires_at, iat=issued_at),
@@ -43,7 +43,7 @@ def get_refresh_token(db: Session, token: str) -> RefreshToken | None:
     """Retrieves a refresh token from the database."""
     db_token = db.query(RefreshToken).filter(RefreshToken.token == token).first()
     if db_token:
-        db_token.expires_at = db_token.expires_at.replace(tzinfo=timezone.utc)
+        db_token.expires_at = db_token.expires_at.replace(tzinfo=UTC)
     return db_token
 
 
@@ -66,7 +66,7 @@ def revoke_all_user_refresh_tokens(db: Session, user_id: int) -> list[RefreshTok
 def clear_expired_refresh_tokens(db: Session, user_id: int) -> None:
     """Clears all expired tokens a user has."""
     query = delete(RefreshToken).where(
-        RefreshToken.user_id == user_id, RefreshToken.expires_at < datetime.now(timezone.utc)
+        RefreshToken.user_id == user_id, RefreshToken.expires_at < datetime.now(UTC)
     )
 
     _ = db.execute(query)
@@ -87,10 +87,10 @@ def create_personal_access_token(
 def create_access_token(payload: TokenPayloadCreate, expires_delta: timedelta | None = None) -> str:
     """Creates a new JWT access token."""
     if expires_delta:
-        expire = datetime.now(timezone.utc) + expires_delta
+        expire = datetime.now(UTC) + expires_delta
     else:
-        expire = datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    to_encode = TokenPayload(sub=payload.sub, sub_type=payload.sub_type, exp=expire, iat=datetime.now(timezone.utc))
+        expire = datetime.now(UTC) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    to_encode = TokenPayload(sub=payload.sub, sub_type=payload.sub_type, exp=expire, iat=datetime.now(UTC))
     try:
         return encode_token(TokenHeader(alg=settings.JWT_ALGORITHM), to_encode)
     # TODO: Find out what exceptions PyJWT actually raises (docs seem wrong)

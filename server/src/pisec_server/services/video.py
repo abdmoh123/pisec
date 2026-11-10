@@ -1,8 +1,8 @@
 """File containing crud functions related to the Video table."""
 
 import mimetypes
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable
 
 from sqlalchemy import Select, delete, select
 from sqlalchemy.orm import Session
@@ -15,6 +15,8 @@ from pisec_server.core.validation.video_validation import get_video_file_path_sa
 from pisec_server.db.db_models import Camera, Video
 from pisec_server.services.camera import get_camera
 from pisec_server.services.pagination import paginate
+
+type VideoFilterFunc = Callable[[Select[Video]], Select[Video]]
 
 
 def get_video_file_data(video: Video) -> VideoFileData:
@@ -45,7 +47,7 @@ def get_video_entries(
     limit: int = 100,
     order_by: VideoColumns = VideoColumns.ID,
     ascending: bool = True,
-    with_filter: Callable[[Select[tuple[Video]]], Select[tuple[Video]]] | None = None,
+    with_filter: VideoFilterFunc | None = None,
 ) -> PaginatedResponse[VideoResponse]:
     """Queries and returns a list of videos with pagination.
 
@@ -145,7 +147,7 @@ def delete_videos(
     video_ids: list[int] | None = None,
     file_name: str | None = None,
     camera_ids: list[int] | None = None,
-    with_filter: Callable[[Select[tuple[Video]]], Select[tuple[Video]]] | None = None,
+    with_filter: VideoFilterFunc | None = None,
 ) -> VideoDeleteResult:
     """Deletes video entries and files."""
     # Get videos without pagination
@@ -175,7 +177,7 @@ def delete_videos(
 
             db.commit()
             successful_deletes.append(video.id)
-        except Exception:
+        except Exception:  # noqa: BLE001
             db.rollback()
             failed_deletes.append(video.id)
 

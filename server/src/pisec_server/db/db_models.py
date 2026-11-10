@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any, Protocol, TypeVar
 
 from pydantic import BaseModel
@@ -17,19 +17,17 @@ from pisec_server.api.models.types.video_columns import VideoColumns
 from pisec_server.api.models.users import UserResponse
 from pisec_server.api.models.videos import VideoResponse
 
-T = TypeVar("T", bound=BaseModel, covariant=True)
+T_co = TypeVar("T_co", bound=BaseModel, covariant=True)
 
 
 class Base(DeclarativeBase):
     """Exists to provide type hints to shutup mypy."""
 
-    pass
 
-
-class Responseable(Protocol[T]):
+class Responseable(Protocol[T_co]):
     """Protocol for objects that can be converted to a pydantic response object."""
 
-    def to_response(self) -> T:
+    def to_response(self) -> T_co:
         """Convert an SQL record to a pydantic response object."""
         ...
 
@@ -41,7 +39,7 @@ class CameraSubscription(Base):
 
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), primary_key=True)
     camera_id: Mapped[int] = mapped_column(Integer, ForeignKey("cameras.id"), primary_key=True)
-    registered_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
+    registered_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(UTC))
 
 
 class User(Base):
@@ -53,11 +51,11 @@ class User(Base):
     email: Mapped[str] = mapped_column(String, unique=True)
     password_hash: Mapped[str] = mapped_column(String)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
-    registered_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
+    registered_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(UTC))
 
     credentials: Mapped[list[CameraCredential]] = relationship("CameraCredential", back_populates="user")
     cameras: Mapped[list[Camera]] = relationship("Camera", secondary="camera_subscriptions", back_populates="users")
-    refresh_tokens: Mapped[list["RefreshToken"]] = relationship("RefreshToken", back_populates="user")
+    refresh_tokens: Mapped[list[RefreshToken]] = relationship("RefreshToken", back_populates="user")
 
     def to_response(self) -> UserResponse:
         """Convert a User object to a UserResponse object."""
@@ -83,7 +81,7 @@ class Camera(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     name: Mapped[str] = mapped_column(String)
     mac_address: Mapped[str] = mapped_column(String)
-    registered_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
+    registered_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(UTC))
 
     users: Mapped[list[User]] = relationship("User", secondary="camera_subscriptions", back_populates="cameras")
     credential: Mapped[CameraCredential] = relationship("CameraCredential", back_populates="camera", uselist=False)
@@ -115,7 +113,7 @@ class Video(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     camera_id: Mapped[int] = mapped_column(ForeignKey(f"{Camera.__tablename__}.id"))
     file_name: Mapped[str] = mapped_column(String)
-    uploaded_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
+    uploaded_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(UTC))
 
     camera: Mapped[Camera] = relationship("Camera", back_populates="videos")
 
@@ -146,7 +144,7 @@ class CameraCredential(Base):
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey(f"{User.__tablename__}.id"))
     camera_id: Mapped[int | None] = mapped_column(Integer, ForeignKey(f"{Camera.__tablename__}.id"))
     client_secret_hash: Mapped[str] = mapped_column(String, nullable=False)
-    registered_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
+    registered_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(UTC))
 
     user: Mapped[User] = relationship("User", back_populates="credentials")
     camera: Mapped[Camera | None] = relationship("Camera", back_populates="credential")
@@ -167,7 +165,7 @@ class RefreshToken(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey(f"{User.__tablename__}.id"))
     token: Mapped[str] = mapped_column(Text, unique=True, index=True)  # Text for potentially long tokens
     expires_at: Mapped[datetime] = mapped_column(DateTime)
-    issued_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
+    issued_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(UTC))
     device_info: Mapped[str | None] = mapped_column(String, nullable=True)  # Optional device info for specific logout
 
     user: Mapped[User] = relationship("User", back_populates="refresh_tokens")

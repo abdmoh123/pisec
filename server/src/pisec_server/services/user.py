@@ -1,6 +1,6 @@
 """File containing crud functions related to the User table."""
 
-from typing import Callable
+from collections.abc import Callable
 
 from argon2 import PasswordHasher
 from sqlalchemy import Select, select
@@ -14,6 +14,8 @@ from pisec_server.core.exceptions import InvalidDataError, RecordAlreadyExistsEr
 from pisec_server.core.security.hashing import generate_hashed_password
 from pisec_server.db.db_models import Camera, User
 from pisec_server.services.pagination import paginate
+
+type UserFilterFunc = Callable[[Select[User]], Select[User]]
 
 
 def get_user(db: Session, user_id_or_email: int | str) -> User | None:
@@ -43,7 +45,7 @@ def get_users(
     limit: int = 100,
     order_by: UserColumns = UserColumns.ID,
     ascending: bool = True,
-    with_filter: Callable[[Select[tuple[User]]], Select[tuple[User]]] | None = None,
+    with_filter: UserFilterFunc | None = None,
 ) -> PaginatedResponse[UserResponse]:
     """Queries and returns a list of all users with pagination.
 

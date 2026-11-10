@@ -61,7 +61,7 @@ def decode(token: str) -> str:
         encoded_payload, signature = token.rsplit(".", 1)
         padded = encoded_payload + "=" * (-len(encoded_payload) % 4)
         payload = base64.urlsafe_b64decode(padded).decode()
-    except Exception:
+    except Exception:  # noqa: BLE001
         raise ValueError("Malformed token")
 
     if not is_valid(signature, payload):

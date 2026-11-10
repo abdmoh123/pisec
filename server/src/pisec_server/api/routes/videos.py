@@ -42,7 +42,7 @@ def get_videos(
     Non-admin users can only see videos from cameras they are subscribed to.
     """
 
-    def admin_filter(q: Select[tuple[VideoSchema]]) -> Select[tuple[VideoSchema]]:
+    def admin_filter(q: Select[VideoSchema]) -> Select[VideoSchema]:
         if current_user.is_admin:
             return q
 
@@ -117,11 +117,11 @@ async def upload_video(
         video_contents: bytes = await video_file.read()
         async with aiofiles.open(file_path, "wb") as file:
             _ = await file.write(video_contents)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         file_path.unlink(missing_ok=True)
         # Any changes to the database will be rolled back if any error is raised
         # See get_db() in pisec_server.db.databse
-        raise HTTPException(status_code=500, detail=f"Failed to upload video file: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to upload video file: {e!s}")
 
     return result_video
 

@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import override
 
-import pisec_server.services.hmac_encoder as hmac_encoder
+from pisec_server.services import hmac_encoder
 
 
 @dataclass(frozen=True)

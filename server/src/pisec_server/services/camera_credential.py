@@ -2,7 +2,7 @@
 
 import secrets
 import uuid
-from typing import Callable
+from collections.abc import Callable
 
 from argon2 import PasswordHasher
 from sqlalchemy import Select, select
@@ -15,6 +15,8 @@ from pisec_server.core.security.hashing import generate_hashed_password
 from pisec_server.db.db_models import Camera, CameraCredential, User
 from pisec_server.services.camera import get_camera
 from pisec_server.services.pagination import paginate
+
+type CredentialFilterFunc = Callable[[Select[CameraCredential]], Select[CameraCredential]]
 
 
 # TODO: Use sqlalchemy select instead of query
@@ -29,7 +31,7 @@ def get_credentials(
     camera_ids: list[int] | None = None,
     skip: int = 0,
     limit: int = 100,
-    with_filter: Callable[[Select[tuple[CameraCredential]]], Select[tuple[CameraCredential]]] | None = None,
+    with_filter: CredentialFilterFunc | None = None,
 ) -> PaginatedResponse[CameraCredentialRedactedResponse]:
     """Queries the database to get all camera credentials with added filtering."""
     query = select(CameraCredential).where(CameraCredential.user_id == user_id)

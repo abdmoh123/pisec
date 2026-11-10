@@ -1,6 +1,6 @@
 """FastAPI routes related to user authentication and authorization."""
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from typing import Annotated
 
 from argon2 import PasswordHasher
@@ -68,7 +68,7 @@ def refresh_access_token(
     """Refreshes an access token using a valid refresh token."""
     refresh_token_db = get_refresh_token(db_session, refresh_token_str)
 
-    if not refresh_token_db or refresh_token_db.expires_at < datetime.now(timezone.utc):
+    if not refresh_token_db or refresh_token_db.expires_at < datetime.now(UTC):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired refresh token")
 
     # Clear any expired refresh tokens to prevent table from infinite growth
@@ -101,7 +101,7 @@ def get_refresh_token_expiry(
     """Allows a client to see if their token is expired or invalid."""
     refresh_token_db = get_refresh_token(db_session, refresh_token)
 
-    if not refresh_token_db or refresh_token_db.expires_at < datetime.now(timezone.utc):
+    if not refresh_token_db or refresh_token_db.expires_at < datetime.now(UTC):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token")
 
     return refresh_token_db.expires_at
