@@ -95,6 +95,38 @@ def _get_video_dir() -> Path:
     return Path(video_dir).resolve()
 
 
+def _get_access_token_expiry() -> int:
+    """Loads access token expiry from environment variables.
+
+    The value is in minutes and defaults to 30 minutes.
+    """
+    return int(os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
+
+
+def _get_refresh_token_expiry() -> int:
+    """Loads refresh token expiry from environment variables.
+
+    The value is in days and defaults to 30 days.
+    """
+    return int(os.environ.get("REFRESH_TOKEN_EXPIRE_DAYS", "30"))
+
+
+def _get_camera_token_expiry() -> int:
+    """Loads camera access token expiry from environment variables.
+
+    The value is in hours and defaults to 12 hours.
+    """
+    return int(os.environ.get("CAMERA_TOKEN_EXPIRE_HOURS", "12"))
+
+
+def _get_video_token_expiry() -> int:
+    """Loads video url token expiry from environment variables.
+
+    The value is in minutes and defaults to 10 minutes.
+    """
+    return int(os.environ.get("VIDEO_TOKEN_EXPIRE_MINUTES", "10"))
+
+
 @dataclass
 class Settings:
     """Centralized settings management for the application."""
@@ -109,11 +141,11 @@ class Settings:
     HMAC_SECRET_KEY: str = field(default_factory=_get_hmac_secret)
 
     # Token expiry times
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
-    REFRESH_TOKEN_EXPIRE_DAYS: int = 30
-    CAMERA_TOKEN_EXPIRE_HOURS: int = 12
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = field(default_factory=_get_access_token_expiry)
+    REFRESH_TOKEN_EXPIRE_DAYS: int = field(default_factory=_get_refresh_token_expiry)
+    CAMERA_TOKEN_EXPIRE_HOURS: int = field(default_factory=_get_camera_token_expiry)
 
-    VIDEO_TOKEN_EXPIRE_MINUTES: int = 10
+    VIDEO_TOKEN_EXPIRE_MINUTES: int = field(default_factory=_get_video_token_expiry)
 
     # Admin bootstrapping
     # The first registered user will automatically become an admin if this is enabled
