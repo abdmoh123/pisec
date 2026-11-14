@@ -1,6 +1,6 @@
 [project]
 name = "pisec-server"
-version = "0.1.2"
+version = "0.1.3"
 description = "Central API server for Pisec"
 readme = "README.md"
 requires-python = ">=3.14"
