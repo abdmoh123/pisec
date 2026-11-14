@@ -101,25 +101,30 @@ class Settings:
 
     VIDEO_FILES_DIR: Path = field(default_factory=_get_video_dir)
 
-    DB_TYPE: DBType = field(default_factory=lambda: _get_db_type())
-    DB_URL: str = _get_db_url(DB_TYPE)
+    DB_TYPE: DBType = field(default_factory=_get_db_type)
 
-    SECRET_KEY: str = _get_secret()  # Generate a random one with `openssl rand -hex 32`
-    JWT_ALGORITHM: JWTAlgorithm = field(default_factory=lambda: _get_jwt_algorithm())  # Default to HS256
+    SECRET_KEY: str = field(default_factory=_get_secret)  # Generate a random one with `openssl rand -hex 32`
+    JWT_ALGORITHM: JWTAlgorithm = field(default_factory=_get_jwt_algorithm)  # Default to HS256
 
-    HMAC_SECRET_KEY: str = _get_hmac_secret()
-    VIDEO_TOKEN_EXPIRE_MINUTES: int = 10
+    HMAC_SECRET_KEY: str = field(default_factory=_get_hmac_secret)
 
     # Token expiry times
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 30
     CAMERA_TOKEN_EXPIRE_HOURS: int = 12
 
+    VIDEO_TOKEN_EXPIRE_MINUTES: int = 10
+
     # Admin bootstrapping
     # The first registered user will automatically become an admin if this is enabled
     ENABLE_FIRST_USER_ADMIN: bool = field(
         default_factory=lambda: os.getenv("ENABLE_FIRST_USER_ADMIN", "true").lower() == "true"
     )
+
+    @property
+    def DB_URL(self) -> str:
+        """Returns the database url based on the database type."""
+        return _get_db_url(self.DB_TYPE)
 
 
 def init_settings(config: Settings) -> None:
