@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Ability to change the expiry values via environment variables
+
+### Changed
+
+- Updated fastapi to 0.162.7
+
+### Fixed
+
+- Video URL using refresh token expiry instead of its own one (days -> minutes)
+- Config uses fields and properties like it should making all tests pass now
+- Lint CI/CD step now passes
+- Dependabot: Updated `dnspython` to fix vulnerability CWE-674
+
 ## [0.1.2] - 2026-11-01
 
 ### Added
