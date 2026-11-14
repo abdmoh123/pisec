@@ -21,7 +21,7 @@ def generate_signed_download_token(video_id: int, user_id: int) -> VideoTokenRec
     # Used to identify the temporary token
     nonce: str = secrets.token_urlsafe(16)
 
-    expires_at = datetime.now(UTC) + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
+    expires_at = datetime.now(UTC) + timedelta(minutes=settings.VIDEO_TOKEN_EXPIRE_MINUTES)
 
     payload = DecodedVideoTokenPayload(user_id, video_id, expires_at, nonce)
 
