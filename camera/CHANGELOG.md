@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Arguments for `shoot` and `record` commands to set the OpenCV camera ID
+- Environment variable for OpenCV camera ID
+- Ability to set the default OpenCV camera ID (if using the OpenCV camera type)
+
+### Fixed
+
+- Default Windows config/data path isn't real (changed to AppData/Local)
+- Dependabot: Updated `dnspython` to 2.9.2 to fix vulnerability CWE-674
+
 ## [0.2.0] - 2026-11-06
 
 ### Added
