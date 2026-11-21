@@ -11,7 +11,12 @@ description = "Initialize the project and install all dependencies"
 run = """
 #!/usr/bin/env bash
 uv python install
-uv sync --frozen --dev
+
+if [ -n "$IS_PI" ]; then
+    uv sync --extra pi --dev
+else
+    uv sync --dev
+fi
 """
 
 [tasks.build]

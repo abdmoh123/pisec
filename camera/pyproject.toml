@@ -12,6 +12,9 @@ dependencies = [
     "websockets>=16.0",
 ]
 
+[project.optional-dependencies]
+pi = [ "picamera2>=0.3.39; sys_platform == 'linux' and platform_machine == 'aarch64'" ]
+
 [dependency-groups]
 dev = [
     "basedpyright>=1.38.1",
