@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+pkgs_to_install=""
+if ! command -v rg >/dev/null 2>&1; then
+    pkgs_to_install+=" ripgrep"
+fi
+if ! command -v fdfind >/dev/null 2>&1; then
+    pkgs_to_install+=" fd-find"
+fi
+if ! command -v fzf >/dev/null 2>&1; then
+    pkgs_to_install+=" fzf"
+fi
+if ! command -v zoxide >/dev/null 2>&1; then
+    pkgs_to_install+=" zoxide"
+fi
+
+# Install dev packages if any above missing
+if [ -n "$pkgs_to_install" ]; then
+    echo "Installing missing packages:$pkgs_to_install"
+    sudo apt-get update
+    sudo apt-get install -y $pkgs_to_install
+fi
+
+# Install lazygit
+if ! command -v lazygit >/dev/null 2>&1; then
+    echo "Installing lazygit"
+
+    LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | \grep -Po '"tag_name": *"v\K[^"]*')
+    LAZYGIT_ARCH=$(uname -m | sed -e 's/aarch64/arm64/')
+    curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_${LAZYGIT_ARCH}.tar.gz"
+    tar xf lazygit.tar.gz lazygit
+    sudo install lazygit -D -t /usr/local/bin/
+    rm lazygit.tar.gz lazygit
+fi
+
+# Install git-delta
+if ! command -v delta >/dev/null 2>&1; then
+    echo "Installing git-delta"
+
+    wget "https://github.com/dandavison/delta/releases/download/0.20.1/git-delta_0.20.1_arm64.deb"
+    sudo dpkg -i "git-delta_0.20.1_arm64.deb"
+    rm "git-delta_0.20.1_arm64.deb"
+fi
+
+# Install modern neovim as appimage
+if ! command -v nvim >/dev/null 2>&1; then
+    echo "Installing neovim appimage"
+
+    wget "https://github.com/neovim/neovim/releases/download/v0.12.6/nvim-linux-arm64.appimage"
+    mkdir -p "$HOME/.local/bin"
+    mv "nvim-linux-arm64.appimage" "$HOME/.local/bin/nvim"
+    chmod +x "$HOME/.local/bin/nvim"
+fi
+
+# Set the IS_PI env variable that tells us that the system is a pi system
+parent_dir="$(realpath "$(dirname "${BASH_SOURCE[0]}")/..")"
+echo "Setting IS_PI env variable: Creating mise.local.toml file at $parent_dir"
+
+mise_local_path="$parent_dir/mise.local.toml"
+printf "[env]\nIS_PI = \"1\"" > "$mise_local_path"
