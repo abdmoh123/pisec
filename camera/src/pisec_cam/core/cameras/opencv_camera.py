@@ -58,7 +58,7 @@ class OpenCVCamera:
             raise RuntimeError("Failed to capture frame")
         return frame
 
-    def start_recording(self, time_s: int = 600) -> list[MatLike]:
+    def start_recording(self, time_s: float = 600) -> list[MatLike]:
         """Starts the camera recording routine.
 
         Args:
