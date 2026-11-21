@@ -14,9 +14,13 @@ class PiCameraSerializer:
     """picamera2-based implementation for the Serializer protocol."""
 
     def __init__(self, camera: PiCamera) -> None:
-        """Creates a picamera2-based serialiser."""
+        """Creates a picamera2-based serialiser.
+
+        Args:
+            camera: A PiCamera instance.
+        """
         self._camera: Picamera2 = camera.camera
-        self._opencv_serializer: Serializer = OpenCVSerializer()
+        self._opencv_serializer: Serializer = OpenCVSerializer(camera.fps)
 
     def write_video(self, data: list[MatLike], file_path: Path) -> None:
         """Writes video data to a file.

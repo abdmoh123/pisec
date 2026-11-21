@@ -15,6 +15,14 @@ from pisec_cam.core.exceptions.serialization import SerializationError
 class OpenCVSerializer:
     """OpenCV based implementation of the Serializer protocol."""
 
+    def __init__(self, fps: int = 24) -> None:
+        """Creates a new OpenCVSerializer instance.
+
+        Args:
+            fps: Frames per second to write the file. Defaults to 24 fps.
+        """
+        self._fps: int = fps
+
     def write_video(self, data: list[MatLike], file_path: Path) -> None:
         """OpenCV based implementation of the write_video method.
 
@@ -28,7 +36,7 @@ class OpenCVSerializer:
         out = VideoWriter(
             filename=file_path,
             fourcc=VideoWriter_fourcc(*"mp4v"),  # pyright: ignore[reportUnknownArgumentType]
-            fps=24.0,
+            fps=self._fps,
             frameSize=data[0].shape[1::-1],  # pyright: ignore[reportAny]
         )
         writer_error: Exception | None = None

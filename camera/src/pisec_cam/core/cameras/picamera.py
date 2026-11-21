@@ -16,7 +16,7 @@ class PiCamera:
     ) -> None:
         """Creates a new instance of a PiCamera object.
 
-        Arguments:
+        Args:
             fps: Recording's frames per second. Defaults to 24 fps.
             width: Width in pixels of the images and videos recorded. Defaults
                 to 640 pixels.
@@ -117,6 +117,15 @@ class PiCamera:
         finally:
             self.camera.close()
         self._is_enabled = False
+
+    @property
+    def fps(self) -> int:
+        """The fps of the camera.
+
+        Returns:
+            The configured frame-rate of the camera.
+        """
+        return self._fps
 
     @property
     def is_enabled(self) -> bool:
