@@ -77,7 +77,7 @@ class OpenCVCamera:
         frames_to_capture = int(time_s * frame_rate)
         print(f"Capturing {frames_to_capture} frames")
         for i in range(frames_to_capture):
-            start_time: float = time.time()
+            start_time: float = time.monotonic()
             ret, frame = self.camera.read()
 
             # If the frame couldn't be captured, break early
@@ -85,7 +85,7 @@ class OpenCVCamera:
                 break
 
             frames.append(frame)
-            end_time: float = time.time()
+            end_time: float = time.monotonic()
             time_taken = end_time - start_time
             # Ensure sleep time isn't negative
             time.sleep(max(0, frame_time - time_taken))
