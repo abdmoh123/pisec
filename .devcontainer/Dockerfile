@@ -18,7 +18,7 @@ EOF
 RUN dnf install -y sudo ripgrep fd-find wget stow fzf zoxide
 
 # Installs dev related apps
-RUN dnf install -y lazygit neovim delta jq
+RUN dnf install -y lazygit neovim git-delta jq
 
 # Set up a non-root dev user with sudo access
 ARG USERNAME=dev
